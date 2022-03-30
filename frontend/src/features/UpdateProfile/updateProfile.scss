@@ -1,0 +1,137 @@
+@use '../../styles/' as *;
+
+input{
+  padding:10px;
+  width: 100%;
+}
+.wrapper {
+  display: flex;
+  background: #fff;
+  height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  width: 100%;
+
+  @include tablet-large {
+    height: 40px;
+  }
+
+  @include tablet-small {
+    height: 40px;
+  }
+
+  @include mobile-large {
+    height: 45px;
+  }
+
+  @include mobile-small {
+    height: 45px;
+  }
+}
+.wrapper .option {
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  max-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid lightgrey;
+  transition: all 0.3s ease;
+  :not(:last-child) {
+    margin-right: 10px;
+  }
+
+  @include tablet-large {
+    max-width: 90px;
+  }
+
+  @include tablet-small {
+    max-width: 90px;
+  }
+
+  @include mobile-large {
+    max-width: 90px;
+  }
+
+  @include mobile-small {
+    max-width: 90px;
+  }
+}
+.wrapper .option .dot {
+  height: 15px;
+  width: 15px;
+  background: #d9d9d9;
+  border-radius: 50%;
+  position: relative;
+}
+.wrapper .option .dot::before {
+  position: absolute;
+  content: '';
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  background: #0069d9;
+  border-radius: 50%;
+  opacity: 0;
+  // transform: scale(1.5);
+  transition: all 0.3s ease;
+}
+input[type='radio'] {
+  display: none;
+}
+#option-1:checked:checked ~ .option-1,
+#option-2:checked:checked ~ .option-2,
+#option-3:checked:checked ~ .option-3 {
+  border-color: #0069d9;
+  background: #0069d9;
+}
+#option-1:checked:checked ~ .option-1 .dot,
+#option-2:checked:checked ~ .option-2 .dot,
+#option-3:checked:checked ~ .option-3 .dot {
+  background: #fff;
+}
+#option-1:checked:checked ~ .option-1 .dot::before,
+#option-2:checked:checked ~ .option-2 .dot::before,
+#option-3:checked:checked ~ .option-3 .dot::before {
+  opacity: 1;
+  // transform: scale(0.8);
+}
+.wrapper .option span {
+  font-size: 14px;
+  color: #808080;
+  @include tablet-large {
+    font-size: 15px;
+  }
+
+  @include tablet-small {
+    font-size: 15px;
+  }
+
+  @include mobile-large {
+    font-size: 15px;
+  }
+
+  @include mobile-small {
+    font-size: 15px;
+  }
+}
+#option-1:checked:checked ~ .option-1 span,
+#option-2:checked:checked ~ .option-2 span,
+#option-3:checked:checked ~ .option-3 span {
+  color: #fff;
+}
+.card-row{
+  margin-bottom: 20px;
+}
+.email-phone{
+  display:flex;
+  justify-content: space-between;
+  input{
+    width: 45%;
+  }
+}

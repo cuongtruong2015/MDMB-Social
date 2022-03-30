@@ -1,0 +1,29 @@
+@use './variables' as *;
+
+/* Màng hình máy tính bảng nhỏ hoặc máy tính màng hình nhỏ */
+@mixin tablet-large {
+  @media only screen and (min-width: $tablet-large-width) and (max-width: ($desktop-width - 1px)) {
+    @content;
+  }
+}
+
+/* Màng hình máy tính bảng nhỏ hoặc máy tính màng hình nhỏ */
+@mixin tablet-small {
+  @media (min-width: $tablet-small-width) and (max-width: ($tablet-large-width - 1px)) {
+    @content;
+  }
+}
+
+/* Màng hình máy tính bảng rất nhỏ hoặc điện thoại di động */
+@mixin mobile-large {
+  @media (max-width: $mobile-large-width) {
+    @content;
+  }
+}
+
+/* Điện thoại di động hoặc màng hình cực nhỏ */
+@mixin mobile-small {
+  @media (max-width: $mobile-small-width) {
+    @content;
+  }
+}

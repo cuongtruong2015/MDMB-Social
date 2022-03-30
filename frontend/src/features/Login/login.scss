@@ -1,0 +1,332 @@
+@use '../../styles/' as *;
+
+.login {
+  &__inner {
+    //override css bootstrap\
+    height: 100vh;
+    overflow-x: hidden;
+
+    .form-check {
+      margin-bottom: 0;
+    }
+    .carousel-inner {
+      height: 85%;
+    }
+    .carousel-caption {
+      position: absolute;
+      bottom: 0;
+    }
+    .form-label {
+      font-weight: 500;
+      font-size: 0.9rem;
+
+      @include tablet-large {
+        font-size: 0.9rem;
+      }
+
+      @include tablet-small {
+        font-size: 1rem;
+      }
+
+      @include mobile-large {
+        font-size: 1.1rem;
+      }
+    }
+
+    .title {
+      margin-bottom: 40px;
+      font-size: medium;
+      margin-bottom: 30px;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      margin-top: 15px;
+      line-height: 1.5;
+      font-size: 1rem;
+
+      @include tablet-large {
+        margin-bottom: 30px;
+        margin-top: 20px;
+      }
+
+      @include tablet-small {
+        margin-bottom: 30px;
+        margin-top: 20px;
+      }
+    }
+
+    .hero {
+      height: 60vh;
+      display: flex;
+      padding: 20px;
+    }
+    .slider {
+      height: 100%;
+      &__heading {
+        color: $main-color;
+      }
+
+      &__desc {
+        color: $main-color;
+      }
+    }
+  }
+
+  &__wrap {
+    padding: 15px 60px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+    @include tablet-large {
+      padding: 15px 30px;
+    }
+
+    @include tablet-small {
+      h2 {
+        font-size: 2rem;
+        font-weight: bold;
+      }
+      padding: 10px 15px;
+    }
+
+    @include mobile-large {
+      padding: 20px 15px;
+    }
+
+    @include mobile-small {
+      padding: 10px;
+    }
+
+    .form-group__input {
+      margin-bottom: 1rem;
+
+      .form__input {
+        @include tablet-large {
+          input {
+            padding: 10px;
+          }
+        }
+
+        @include tablet-small {
+          input {
+            padding: 13px;
+            font-size: 1.2rem;
+          }
+        }
+
+        @include mobile-large {
+          input {
+            padding: 15px;
+            font-size: 1.2rem;
+          }
+        }
+
+        @include mobile-small {
+          input {
+            font-size: 1.3rem;
+          }
+        }
+      }
+
+      @include tablet-large {
+        margin-bottom: 1.5rem;
+      }
+
+      @include tablet-small {
+        margin-bottom: 1.5rem;
+      }
+    }
+  }
+
+  &__column {
+    padding: 20px;
+    background-color: $bg-color;
+  }
+}
+
+.form {
+  &__forgot {
+    text-align: right;
+  }
+  .forgot__title {
+    color: $main-color;
+    a {
+      text-decoration: underline;
+    }
+
+    @include tablet-large {
+      font-size: 1rem;
+    }
+
+    @include tablet-small {
+      font-size: 1rem;
+    }
+
+    @include mobile-large {
+      font-size: 1rem;
+    }
+  }
+  &__btn {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .btn-login {
+      @include tablet-large {
+        padding: 10px 20px;
+      }
+
+      @include tablet-small {
+        padding: 10px 25px;
+      }
+
+      @include mobile-large {
+        padding: 10px 30px;
+      }
+
+      @include mobile-small {
+        padding: 10px 25px;
+        width: 100%;
+      }
+
+      background-color: $main-color;
+      border: 1px solid $main-color;
+      border-radius: 4px;
+    }
+  }
+  &__register_detail {
+    margin-top: 1.5rem;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+  }
+  .register__wrap {
+    margin-left: 10px;
+    color: $main-color;
+
+    @include tablet-large {
+      font-size: 1rem;
+    }
+
+    @include tablet-small {
+      font-size: 1.1rem;
+    }
+
+    @include mobile-large {
+      font-size: 1.1rem;
+    }
+  }
+  &__group-checkbox {
+    height: 38px;
+    display: flex;
+    align-items: center;
+  }
+}
+.sign__other {
+  margin-top: 20px;
+
+  &--text {
+    text-align: center;
+    // display: flex;
+    // flex-direction: row;
+    &::after,
+    &::before {
+      // content: '';
+      // flex: 1 1;
+      // border-bottom: 1px solid;
+      // margin: auto;
+
+      @include tablet-small {
+        width: 4rem;
+      }
+
+      @include mobile-large {
+        width: 3rem;
+      }
+
+      @include mobile-small {
+        width: 2.5rem;
+      }
+      display: inline-block;
+      content: '';
+      border-top: 1px solid #68e1fc;
+      width: 6rem;
+      transform: translateY(-5px);
+    }
+    &:before {
+      margin-right: 10px;
+    }
+    &:after {
+      margin-left: 10px;
+    }
+  }
+
+  &--icon {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .img {
+    &__border {
+      border: 1px solid $main-color;
+      border-radius: 4px;
+
+      width: 85px;
+      height: 50px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #d6dadc;
+        transition: var(
+          border-color 0.4s ease 0s,
+          background-color 0.4s ease 0s,
+          border-color 0.4s ease 0s,
+          background-color 0.4s ease 0s
+        );
+        box-shadow: var(none, 0 1px 4px rgba(0, 0, 0, 0.6));
+      }
+      a {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    }
+    &__inner {
+      padding: 10px;
+    }
+    &__google-login {
+      background-color: transparent !important;
+      width: 100%;
+      height: 100%;
+      span {
+        padding: 0 !important;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &__facebook-login {
+      display: inline-flex;
+      align-items: center;
+      box-shadow: rgb(0 0 0 / 24%) 0px 2px 2px 0px,
+        rgb(0 0 0 / 24%) 0px 0px 1px 0px;
+      padding: 0px;
+      border-radius: 2px;
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 500;
+      height: 100%;
+      width: 100%;
+      span {
+        padding: 0 !important;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    &__img {
+      transform: scale(0.8, 0.8);
+      width: 100%;
+      max-height: 100%;
+      object-fit: scale-down;
+    }
+  }
+}
