@@ -4,8 +4,8 @@ const http = require('http');
 
 const server = http.createServer(app);
 
-app.get('/.well-known/pki-validation/C4986DA0C7047C5EFEEA1FA9CEA4BFC6.txt', (req, res) => {
-    const file = __dirname + '/C4986DA0C7047C5EFEEA1FA9CEA4BFC6.txt';
+app.get('/.well-known/pki-validation/F21FCDACE6A9563FCE3B1F424C8F3E7F.txt', (req, res) => {
+    const file = __dirname + '/F21FCDACE6A9563FCE3B1F424C8F3E7F.txt';
     res.download(file);
 });
 
