@@ -4,7 +4,7 @@ const messageToUser = require('../messageToUser');
 function getOldMessage(fromAccount, toAccount, Callback) {
     // var con = connection.createConnection();
     // con.connect(async function (err) {
-        connection.pool.getConnection(function (err, con) {
+    connection.pool.getConnection(function (err, con) {
         if (err) throw err;
         // console.log("Connected!");
         // await connection.setTimeZone(con);
@@ -32,7 +32,7 @@ function getOldMessage(fromAccount, toAccount, Callback) {
 function getOlderMessage(fromAccount, toAccount, messageId, Callback) {
     // var con = connection.createConnection();
     // con.connect(function (err) {
-        connection.pool.getConnection(function (err, con) {
+    connection.pool.getConnection(function (err, con) {
         if (err) throw err;
         // console.log("Connected!");
         var sql = `SELECT *
@@ -60,7 +60,7 @@ function getOlderMessage(fromAccount, toAccount, messageId, Callback) {
 function addMessage(fromAccount, toAccount, content, type, Callback) {
     // var con = connection.createConnection();
     // con.connect(async function (err) {
-        connection.pool.getConnection(function (err, con) {
+    connection.pool.getConnection(function (err, con) {
         if (err) throw err;
         // await connection.setTimeZone(con);
         var sql = `insert into MDMB.MessageToUser(FromAccount, ToAccount, Content, Type) values(?,?,?,?);`;
@@ -81,7 +81,7 @@ async function seenMessage(messageId) {
     // var con = connection.createConnection();
     return new Promise((resolve, reject) => {
         // con.connect(async function (err) {
-            connection.pool.getConnection(function (err, con) {
+        connection.pool.getConnection(function (err, con) {
             if (err) throw err;
             // await connection.setTimeZone(con);
             var sql = `UPDATE MDMB.MessageToUser SET SeenDate = NOW() WHERE MessageId = ?`;
@@ -100,23 +100,27 @@ async function seenMessage(messageId) {
 }
 
 function getMessageById(messageId) {
-    var con = connection.createConnection();
+    // var con = connection.createConnection();
     return new Promise((resolve, reject) => {
-        let sql = `SELECT * FROM MDMB.MessageToUser WHERE MessageId = ?`;
-        con.query(sql, [messageId],
-            function (err, result) {
-                connection.closeConnection(con);
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                }
-                else {
-                    if (result.length > 0) {
-                        resolve(new messageToUser.MessageToUser(result[0].MessageId, result[0].FromAccount, result[0].SentDate, result[0].Content, result[0].Type, result[0].ToAccount, result[0].SeenDate));
+        connection.pool.getConnection(function (err, con) {
+            if (err) throw err;
+            let sql = `SELECT * FROM MDMB.MessageToUser WHERE MessageId = ?`;
+            con.query(sql, [messageId],
+                function (err, result) {
+                    connection.closeConnection(con);
+                    if (err) {
+                        console.log(err);
+                        reject(err);
                     }
-                    else resolve(false);
-                }
-            });
+                    else {
+                        if (result.length > 0) {
+                            resolve(new messageToUser.MessageToUser(result[0].MessageId, result[0].FromAccount, result[0].SentDate, result[0].Content, result[0].Type, result[0].ToAccount, result[0].SeenDate));
+                        }
+                        else resolve(false);
+                    }
+                });
+        });
+
     });
 }
 
