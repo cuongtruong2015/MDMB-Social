@@ -13,6 +13,7 @@ import partnerProfileReducer from 'features/UserInfor/PartnerInforSlice'
 import searchAccountReducer from 'features/Contact/LeftSide/SearchSilce'
 import listRelationshipReducer from 'features/UserInfor/listRelationshipSlice';
 import listFriendRecommendedReducer from 'features/Contact/RightSide/ListFriendRecommendSlice';
+import notificationReducer from 'features/ChatOverView/ChatConversations/notificationCountSlice';
 
 const appReducer = combineReducers({
   login: loginReducer,
@@ -27,6 +28,7 @@ const appReducer = combineReducers({
   searchAccount:searchAccountReducer,
   listRelationship:listRelationshipReducer,
   listFriendRecommended:listFriendRecommendedReducer,
+  notificationCount:notificationReducer,
 });
 
 const rootReducer = (state, action) => {

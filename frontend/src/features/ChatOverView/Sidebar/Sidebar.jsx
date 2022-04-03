@@ -16,6 +16,10 @@ import { getAuth } from 'app/selectors/login';
 import { useNavigate, Link } from 'react-router-dom';
 import { getSocket } from 'app/selectors/socket';
 import { getUserProfile } from 'app/actions/userProfile';
+import { notificationCountSelector } from 'app/selectors/notificationCount';
+import { SetNotification } from 'components/Notification/notification';
+import { getNotificationCount } from 'app/actions/notificationCount';
+import { getListConversation } from 'app/actions/conversations';
 
 const HoverEffect = css`
   transition: all 0.3s ease-in-out;
@@ -83,7 +87,6 @@ const HoverWrapper = styled.div`
     border-radius: 20%;
     padding: 7px;
   }
-  
 `;
 
 const MessageIcon = styled(Message)`
@@ -132,7 +135,24 @@ const ProfileIcon = styled(UserCircle)`
 const PopoverBS = styled(Popover)`
   border-radius: 10px;
 `;
-
+const NotificationCount = styled.div`
+  background-color: #f15959;
+  height: 1.1rem;
+  min-width: 1.1rem;
+  position: absolute;
+  margin-left: 2rem;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+`;
+const NotiText = styled.div`
+  font-size: 0.7rem;
+  font-weight: bold;
+  vertical-align: middle;
+  margin-right: 4px;
+  margin-left: 4px;
+`;
 function LefBar({ MessageActive, ContactActive }) {
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState(null);
@@ -177,17 +197,33 @@ function LefBar({ MessageActive, ContactActive }) {
       clearTimeout(disaprearSetting);
     };
   });
+  const notification = useSelector(notificationCountSelector);
+  if (notification.chat + notification.contact != 0)
+    document.title = `MDMB Social (${
+      notification.chat + notification.contact
+    })`;
+  else document.title = `MDMB Social`;
   return (
     <Wrapper className="LeftBar">
       <Logo onClick={handleLogoClick} ContactActive={ContactActive} />
       <HoverWrapper>
         <MessageIcon active={MessageActive ? 1 : 0} onClick={handleChatClick} />
+        {notification.chat > 0 && (
+          <NotificationCount>
+            <NotiText>{notification.chat}</NotiText>
+          </NotificationCount>
+        )}
       </HoverWrapper>
       <HoverWrapper>
         <PhoneBookIcon
           active={ContactActive ? 1 : 0}
           onClick={handleContactClick}
         />
+        {notification.contact > 0 && (
+          <NotificationCount>
+            <NotiText>{notification.contact}</NotiText>
+          </NotificationCount>
+        )}
       </HoverWrapper>
       <HoverWrapper position="bottom">
         <div ref={ref}>

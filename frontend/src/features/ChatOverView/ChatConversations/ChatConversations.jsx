@@ -17,6 +17,7 @@ import { Form, InputGroup as BsInputGroup } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDebounce } from 'hooks';
+import { SetNotification } from 'components/Notification/notification';
 
 const SideBar = styled.div`
   width: 100%;
@@ -152,6 +153,7 @@ function ChatConversations({ onSelectRoom }) {
   const handleRemoveSearchClick = () => {
     setSearchTerm('');
   };
+
   return (
     <SideBar>
       <Logo>MDMB Social</Logo>

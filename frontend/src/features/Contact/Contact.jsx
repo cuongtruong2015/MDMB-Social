@@ -4,7 +4,13 @@ import styled from 'styled-components';
 import Sidebar from 'features/ChatOverView/Sidebar/Sidebar';
 import LeftSide from 'features/Contact/LeftSide/LeftSide';
 import RightSide from 'features/Contact/RightSide/RightSide';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getAuth } from 'app/selectors/login';
+import { getConversations } from 'app/selectors/conversations';
+import { getListConversation } from 'app/actions/conversations';
+import SetNotification from 'components/Notification/notification';
+import { notificationCountSelector } from 'app/selectors/notificationCount';
+import { getSocket } from 'app/selectors/socket';
 const Wrapper = styled(Container)`
   height: 100vh;
   padding: 0;
@@ -39,10 +45,9 @@ const LeftSideWrapper = styled.div`
     min-width: 230px;
   }
   @media (max-width: 415px) {
-    width:155px;
+    width: 155px;
     min-width: 155px;
   }
-  
 `;
 const RightSideWrapper = styled.div`
   width: 100%;
@@ -50,6 +55,9 @@ const RightSideWrapper = styled.div`
 `;
 
 export default function Contact() {
+  //notification
+  
+  //end notification
   return (
     <Wrapper fluid>
       <LeftBar>

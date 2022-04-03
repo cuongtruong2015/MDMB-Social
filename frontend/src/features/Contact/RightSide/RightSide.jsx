@@ -1,15 +1,20 @@
-import { UserPlus, UserCheck, UserX } from '@styled-icons/boxicons-solid';
-import styled, { css } from 'styled-components';
-import { Row, Col, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { getListRelationshipSelector } from 'app/selectors/listRelationship';
-import { getListRelationship } from 'app/actions/listRelationship';
-import React from 'react';
-import { getAuth } from 'app/selectors/login';
-import { AddFriend, getSearchAccount } from 'app/actions/partnerProfile';
-import { useNavigate } from '../../../../node_modules/react-router-dom/index';
+import { UserCheck, UserPlus, UserX } from '@styled-icons/boxicons-solid';
+import { getListConversation } from 'app/actions/conversations';
 import { getListFriendRecommended } from 'app/actions/listFriendRecommended';
+import { getListRelationship } from 'app/actions/listRelationship';
+import { getNotificationCount } from 'app/actions/notificationCount';
+import { AddFriend } from 'app/actions/partnerProfile';
+import { getConversations } from 'app/selectors/conversations';
 import { getListFriendRecommendedSelector } from 'app/selectors/listFriendRecommended';
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
+import { getAuth } from 'app/selectors/login';
+import { getSocket } from 'app/selectors/socket';
+import React from 'react';
+import { Button, Row } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import styled, { css } from 'styled-components';
+import { useNavigate } from '../../../../node_modules/react-router-dom/index';
+import messageAudio from 'assets/audio/messengerSound.mp3';
 
 const RightSideWrapper = styled.div`
   display: flex;
@@ -18,7 +23,7 @@ const RightSideWrapper = styled.div`
   width: 100%;
   border-left: 1px solid black;
   overflow-x: hidden;
-  height:100vh;
+  height: 100vh;
   justify-content: flex-start;
 `;
 const Header = styled.div`
@@ -229,6 +234,29 @@ export default function RightSide() {
         dispatch(getListFriendRecommended(AccountId));
       });
   };
+  //notification
+  React.useEffect(() => {
+    dispatch(getNotificationCount(null, newListRelationship.length));
+  }, [newListRelationship]);
+  const listConversation = useSelector(getConversations);
+  const socket = useSelector(getSocket);
+  var notificationChat = 0;
+  listConversation.forEach((item) => {
+    if (item.UnseenMessage != null) notificationChat += (item.UnseenMessage>0?1:0);
+  });
+  var audio = new Audio(messageAudio);
+  React.useEffect(() => {
+    socket?.on('chat message', (data) => {
+      dispatch(getListConversation(AccountId));
+      audio.play();
+    });
+    return () => {
+      socket?.off('chat message');
+    };
+  }, [socket]);
+  React.useEffect(() => {
+      dispatch(getNotificationCount(notificationChat, newListRelationship.length));
+  }, [notificationChat]);
   return (
     <RightSideWrapper>
       <Header>Friend you may know...</Header>
@@ -276,15 +304,19 @@ export default function RightSide() {
           ))}
         </RowBS>
       </TopFriendRequest>
-      {listFriendRecommended.length>0&&<Title>
-        Recommend ({listFriendRecommended?.length} <AddFriendIcon />)
-      </Title>}
+      {listFriendRecommended.length > 0 && (
+        <Title>
+          Recommend ({listFriendRecommended?.length} <AddFriendIcon />)
+        </Title>
+      )}
       <RowBS>
         {listFriendRecommended.map((item, index) => (
           <CardFriendRecommend key={index}>
-            <Avatar onClick={() => {
+            <Avatar
+              onClick={() => {
                 handleAvatarClick(item.AccountId);
-              }}>
+              }}
+            >
               <img src={item.Avatar} alt="avatar" />
             </Avatar>
             <Name>{item.Name}</Name>

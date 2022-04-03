@@ -1,9 +1,9 @@
 import {
   getMessagesLatest,
   receiveMessage,
-  updateSeenMessage,
   selectRoom,
   sendMessage,
+  updateSeenMessage,
 } from 'app/actions/chat';
 import {
   getListConversation,
@@ -20,6 +20,7 @@ import {
 } from 'app/actions/socket';
 import { getConversations } from 'app/selectors/conversations';
 import { getAuth } from 'app/selectors/login';
+import { notificationCountSelector } from 'app/selectors/notificationCount';
 import { getSocket } from 'app/selectors/socket';
 import LoadingOverlay from 'components/LoadingOverlay';
 import ChatConversations from 'features/ChatOverView/ChatConversations/ChatConversations';
@@ -31,6 +32,12 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { SetNotification } from 'components/Notification/notification';
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
+import messageAudio from 'assets/audio/messengerSound.mp3';
+import { getListRelationship } from 'app/actions/listRelationship';
+import { getNotificationCount } from 'app/actions/notificationCount';
+
 const Wrapper = styled(Container)`
   height: 100vh;
   overflow: hidden;
@@ -125,6 +132,7 @@ function ChatOverView() {
 
   React.useEffect(() => {
     socket?.on('chat message', (data) => {
+      audio.play();
       if (roomId) {
         if (
           data.ToAccount === auth?.accountId &&
@@ -171,7 +179,32 @@ function ChatOverView() {
       socket?.emit('seen message', latestMessageId);
     }
   };
+  //notification
+  const AccountId = auth?.accountId;
+  const listRelationship = useSelector(getListRelationshipSelector);
+  const newListRelationship = listRelationship?.filter(
+    (item) =>
+      (item.Type === 'rsendpending' && item.RelatedAccountId !== AccountId) ||
+      (item.Type === 'lsendpending' && item.RelatingAccountId !== AccountId)
+  );
 
+  var notificationChat = 0;
+  listConversation.forEach((item) => {
+    if (item.UnseenMessage != null)
+      notificationChat += item.UnseenMessage > 0 ? 1 : 0;
+  });
+  const notification = useSelector(notificationCountSelector);
+  var audio = new Audio(messageAudio);
+  React.useEffect(() => {
+    dispatch(
+      getNotificationCount(notificationChat, newListRelationship.length)
+    );
+  }, [notificationChat, newListRelationship.length]);
+  React.useEffect(() => {
+    dispatch(getListConversation(AccountId));
+    dispatch(getListRelationship(AccountId));
+  }, []);
+  //end notification
   return socket ? (
     <Wrapper fluid>
       <RowBS>
