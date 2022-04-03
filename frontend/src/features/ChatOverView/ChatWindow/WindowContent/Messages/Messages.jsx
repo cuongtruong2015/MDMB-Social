@@ -8,6 +8,7 @@ import CardMessage from 'features/ChatOverView/ChatWindow/WindowContent/Messages
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
+import { useParams } from 'react-router-dom';
 
 const dotTyping = keyframes`
   0% {
@@ -85,7 +86,22 @@ function Messages({ typing, onSeenMessage }) {
       inline: 'nearest',
     });
   }, [messagesLatest]);
+  const { roomId } = useParams();
 
+  const maxMessage = messagesLatest.reduce(function (prev, current) {
+    return prev.MessageId > current.MessageId ? prev : current;
+  });
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!maxMessage?.SeenDate && +roomId === +maxMessage?.FromAccount) {
+        onSeenMessage(maxMessage.MessageId, roomId);
+        console.log('asdasd');
+      }
+    }, 100);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [roomId]);
   return (
     <>
       {messagesLatest.map((item) => (
@@ -100,7 +116,7 @@ function Messages({ typing, onSeenMessage }) {
             content={item.Content}
             type={item.Type === 0 ? 'text' : 'image'}
             owner={item.FromAccount === myAccountId}
-            onSeenMessage={onSeenMessage}
+            // onSeenMessage={onSeenMessage}
             seenLatest={messageSeenDateLatest?.MessageId === item.MessageId}
             idLastMessage={messagesLatest[messagesLatest.length - 1].MessageId}
           />

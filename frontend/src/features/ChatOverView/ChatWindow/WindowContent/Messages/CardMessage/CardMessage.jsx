@@ -112,24 +112,13 @@ function CardMessage(props) {
     seenDate,
     owner,
     type,
-    onSeenMessage,
+    // onSeenMessage,
     fromAccount,
     messageId,
     seenLatest,
     idLastMessage,
   } = props;
-
-  const { roomId } = useParams();
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!seenDate && +roomId === fromAccount) {
-        onSeenMessage(messageId, roomId);
-      }
-    }, 100);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [roomId]);
+  
 
   const regexContainLink =
     /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
