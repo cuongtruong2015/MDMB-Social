@@ -84,7 +84,8 @@ async function seenMessage(messageId) {
         connection.pool.getConnection(function (err, con) {
             if (err) throw err;
             // await connection.setTimeZone(con);
-            var sql = `UPDATE MDMB.MessageToUser SET SeenDate = NOW() WHERE MessageId = ?`;
+            // var sql = `UPDATE MDMB.MessageToUser SET SeenDate = NOW() WHERE MessageId = ?`;
+            var sql = `CALL MDMB.proc_update_seen_message(?);`;
             con.query(sql, [messageId],
                 function (err, result) {
                     // connection.closeConnection(con);

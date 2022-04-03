@@ -8,18 +8,18 @@ function status(io, socket) {
         await listAccountId.forEach(async accountId => {
             // console.log("accountId: " + accountId);
             let user = await socketUser.getUserByAccountId(accountId);
-            console.log(user);
+            // console.log(user);
             if (user) {
                 listOnline.push(accountId);
             }
         });
-        console.log(`list online:`);
-        console.log(listOnline);
+        // console.log(`list online:`);
+        // console.log(listOnline);
         response(listOnline);
     });
 
     socket.on('check online', async (accountId, response) => {
-        console.log("check online: " + accountId);
+        // console.log("check online: " + accountId);
         let user = await socketUser.getUserByAccountId(accountId);
         if (user) {
             response(true);
@@ -30,7 +30,7 @@ function status(io, socket) {
 
     socket.on('ping', (response) => {
         response('pong');
-        console.log(socket.accountId + 'is ping');
+        // console.log(socket.accountId + 'is ping');
     });
 }
 

@@ -84,7 +84,7 @@ function getContentLinkPreview(req, res) {
             });
         })
         .catch(err => {
-            console.log(err);
+            // console.log(err);
             res.status(200).json({ error: err });
         });
 }

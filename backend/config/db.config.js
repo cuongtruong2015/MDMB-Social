@@ -1,4 +1,4 @@
-//old database
+// old database
 // const HOST = "database-mdmb.culnu82npjk4.ap-southeast-1.rds.amazonaws.com";
 // const USER = "admin";
 // const PASSWORD = "qwer1234";

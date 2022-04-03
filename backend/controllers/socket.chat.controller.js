@@ -5,10 +5,10 @@ const cryptoMiddlware = require('../middlewares/crypto.middleware');
 function chat(io, socket) {
     socket.on('chat message', async (msg, accountId, response) => {
         let messageBeforeEncrypt = msg;
-        console.log("chat message: " + msg + " to accountId: " + accountId);
+        // console.log("chat message: " + msg + " to accountId: " + accountId);
         
         msg = await cryptoMiddlware.encrypt(msg);
-        console.log('encrypted msg: ' + msg);
+        // console.log('encrypted msg: ' + msg);
 
         messageToUserDAO.addMessage(socket.accountId, accountId, msg, 0, async (res, messageId) => {
             if (res) {
@@ -29,17 +29,17 @@ function chat(io, socket) {
                         }
                     });
                 }
-                console.log("chat message sent");
+                // console.log("chat message sent");
                 response('ok', message);
             } else {
-                console.log("chat message not sent");
+                // console.log("chat message not sent");
                 response('failed');
             }
         });
     });
 
     socket.on('typing', async (accountIdTo) => {
-        console.log("typing: " + socket.accountId + " to accountId: " + accountIdTo);
+        // console.log("typing: " + socket.accountId + " to accountId: " + accountIdTo);
         let user = await socketUser.getUserByAccountId(accountIdTo);
         if (user) {
             user.socketId.forEach(socketId => {
@@ -49,7 +49,7 @@ function chat(io, socket) {
     });
 
     socket.on('stop typing', async (accountIdTo) => {
-        console.log("stop typing: " + socket.accountId + " to accountId: " + accountIdTo);
+        // console.log("stop typing: " + socket.accountId + " to accountId: " + accountIdTo);
         let user = await socketUser.getUserByAccountId(accountIdTo);
         if (user) {
             user.socketId.forEach(socketId => {
@@ -66,7 +66,7 @@ function chat(io, socket) {
             let socketIds = await socketUser.getUserByAccountId(messageToUser.FromAccount);
             if (socketIds) {
                 socketIds.socketId.forEach(socketId => {
-                    console.log('OLA ' + socketId);
+                    // console.log('OLA ' + socketId);
                     io.to(socketId).emit('seen message', messageId);
                 });
             }
