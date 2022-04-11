@@ -136,8 +136,8 @@ function CardConversation({ onSelectRoom, conversation }) {
     FromAccount,
     AccountId,
     UnseenMessage,
+    Type,
   } = conversation;
-
   const { roomId } = useParams();
   const listAccountOnline = useSelector(getUsersOnline);
 
@@ -158,7 +158,9 @@ function CardConversation({ onSelectRoom, conversation }) {
               <Name> {name}</Name>
               <MessageInner>
                 <Message>
-                  {lastMessage
+                  {Type === 3
+                    ? 'You have sent an attachment'
+                    : lastMessage
                     ? lastMessage
                     : 'You are now connected on MDMB Social'}
                 </Message>

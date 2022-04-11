@@ -7,6 +7,11 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import isValidURL from 'utils/validUrl';
+import { File } from '@styled-icons/boxicons-solid';
+import {
+  Navigate,
+  useNavigate,
+} from '../../../../../../../node_modules/react-router-dom/index';
 dayjs.extend(relativeTime);
 
 const Wrapper = styled.div`
@@ -24,7 +29,7 @@ const WrapperContent = styled.div`
   color: ${({ owner }) => (owner === 1 ? '#000000' : '#e7e7f1')};
   max-width: 800px;
   font-size: 14px;
-  min-width: 200px;
+  /* min-width: 200px; */
   position: relative;
 `;
 
@@ -68,6 +73,7 @@ const Time = styled(Form.Text)`
   right: ${({ owner }) => (owner ? '0' : '')};
   left: ${({ owner }) => (owner ? '' : '0')};
   color: rgb(118, 118, 118);
+  white-space: nowrap;
 `;
 
 const AvatarSeen = styled.div`
@@ -102,7 +108,34 @@ const SentStatus = styled(CheckCircle)`
   height: 1rem;
   color: #4849a1;
 `;
-
+const ImageMessageWrapper = styled.div`
+  img,
+  video {
+    max-width: 100%;
+    max-height: 250px;
+    margin-bottom: 10px;
+    border-radius: 4%;
+  }
+`;
+const FileMessageWrapper = styled.div`
+  display: flex;
+  flex-direction: flex-row;
+  justify-content: flex-start;
+  align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const FileIcon = styled(File)`
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  background-color: #e8e8ea;
+`;
+const NameFile = styled.div`
+  margin-left: 3px;
+`;
 function CardMessage(props) {
   const {
     name,
@@ -118,8 +151,7 @@ function CardMessage(props) {
     seenLatest,
     idLastMessage,
   } = props;
-  
-
+  const navigate = useNavigate();
   const regexContainLink =
     /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
   var pattern = new RegExp(
@@ -147,14 +179,36 @@ function CardMessage(props) {
           <WrapperContent owner={owner ? 1 : 0}>
             <WrapperMessage owner={owner ? 1 : 0}>
               <Message>
-                {type === 'text' ? (
+                {type === 0 ? (
                   isLink ? (
                     <CardLink url={url} content={content} owner={owner} />
                   ) : (
                     content
                   )
+                ) : type === 1 ? (
+                  <ImageMessageWrapper>
+                    <img src={content} alt="" />
+                  </ImageMessageWrapper>
+                ) : type === 2 ? (
+                  <ImageMessageWrapper>
+                    <video src={content} alt="" />
+                  </ImageMessageWrapper>
                 ) : (
-                  <img src={content} alt="" />
+                  <FileMessageWrapper
+                    onClick={
+                      ()=>(window.location.href = content)
+                    }
+                  >
+                    <FileIcon />
+                    <NameFile>
+                      {''.concat(
+                        content.substring(
+                          content.indexOf('%2F') + 3,
+                          content.indexOf('?')
+                        )
+                      )}
+                    </NameFile>
+                  </FileMessageWrapper>
                 )}
               </Message>
             </WrapperMessage>

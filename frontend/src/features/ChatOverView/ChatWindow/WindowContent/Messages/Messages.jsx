@@ -95,7 +95,6 @@ function Messages({ typing, onSeenMessage }) {
     const timer = setTimeout(() => {
       if (!maxMessage?.SeenDate && +roomId === +maxMessage?.FromAccount) {
         onSeenMessage(maxMessage.MessageId, roomId);
-        console.log('asdasd');
       }
     }, 100);
     return () => {
@@ -114,7 +113,7 @@ function Messages({ typing, onSeenMessage }) {
             avatar={partner.Avatar}
             fromAccount={item.FromAccount}
             content={item.Content}
-            type={item.Type === 0 ? 'text' : 'image'}
+            type={item.Type}
             owner={item.FromAccount === myAccountId}
             // onSeenMessage={onSeenMessage}
             seenLatest={messageSeenDateLatest?.MessageId === item.MessageId}

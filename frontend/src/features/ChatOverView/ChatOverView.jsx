@@ -156,8 +156,8 @@ function ChatOverView() {
     }
   };
 
-  const handleSendMessage = (message) => {
-    socket?.emit('chat message', message, roomId, (status, data) => {
+  const handleSendMessage = (message,type) => {
+    socket?.emit('chat message', message,type, roomId, (status, data) => {
       if (status === 'ok' && +data.ToAccount === +roomId) {
         dispatch(sendMessage(data));
         dispatch(updateListConversationWithSentMessage(data));
@@ -204,7 +204,19 @@ function ChatOverView() {
     dispatch(getListConversation(AccountId));
     dispatch(getListRelationship(AccountId));
   }, []);
-  //end notification
+  //end notification  
+  //sendfile
+  const handleSendFiles =  (files) => {
+    files?.map((file) => {
+      var Type = file.type.includes('image') ? 1 : file.type.includes('video') ? 2 : 3;
+      socket?.emit('chat message', file.downloadURL,Type, roomId, (status, data) => {
+        if (status === 'ok' && +data.ToAccount === +roomId) {
+          dispatch(sendMessage(data));
+          dispatch(updateListConversationWithSentMessage(data));
+        }
+      });
+    })
+  }
   return socket ? (
     <Wrapper fluid>
       <RowBS>
@@ -222,6 +234,7 @@ function ChatOverView() {
               myAccountId={auth?.accountId}
               typing={typing}
               onSeenMessage={handleSeenMessage}
+              onSendFiles = {handleSendFiles}
             />
           ) : (
             <WindowEmpty />

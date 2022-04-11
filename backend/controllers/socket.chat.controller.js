@@ -3,14 +3,13 @@ const messageToUserDAO = require('../models/data-access/messageToUserDAO');
 const cryptoMiddlware = require('../middlewares/crypto.middleware');
 
 function chat(io, socket) {
-    socket.on('chat message', async (msg, accountId, response) => {
+    socket.on('chat message', async (msg,type, accountId, response) => {
         let messageBeforeEncrypt = msg;
-        // console.log("chat message: " + msg + " to accountId: " + accountId);
-        
+        console.log("chat message: " + msg + " to accountId: " + accountId);
         msg = await cryptoMiddlware.encrypt(msg);
         // console.log('encrypted msg: ' + msg);
 
-        messageToUserDAO.addMessage(socket.accountId, accountId, msg, 0, async (res, messageId) => {
+        messageToUserDAO.addMessage(socket.accountId, accountId, msg, type, async (res, messageId) => {
             if (res) {
                 let message = await messageToUserDAO.getMessageById(messageId);
                 message.Content = messageBeforeEncrypt;

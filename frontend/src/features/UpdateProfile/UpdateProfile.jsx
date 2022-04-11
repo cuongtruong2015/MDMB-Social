@@ -251,7 +251,6 @@ function UpdateProfile() {
   const onImageChange = (e) => {
     const file = e.target.files[0];
     const fileExtension = file.name.split('.').pop();
-
     if ((file.size / 1024 / 1024).toFixed(2) > 3) {
       Swal.fire({
         icon: 'warning',
@@ -260,9 +259,9 @@ function UpdateProfile() {
       });
       setImage(userInfor?.Avatar);
     } else if (
-      fileExtension === 'jpg' ||
-      fileExtension === 'png' ||
-      fileExtension === 'jpeg'
+      fileExtension.toLowerCase() === 'jpg' ||
+      fileExtension.toLowerCase() === 'png' ||
+      fileExtension.toLowerCase() === 'jpeg'
     ) {
       setImage(URL.createObjectURL(file));
     } else {
