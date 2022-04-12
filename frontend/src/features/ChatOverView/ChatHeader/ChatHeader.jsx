@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 
 const Wrapper = styled.div`
   display: flex;
@@ -20,8 +21,7 @@ const Wrapper = styled.div`
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   visibility: ${(props) => (props.WindowEmpty ? 'hidden' : 'none')};
 `;
-const WrapperInfoPadding = styled.div`
-`;
+const WrapperInfoPadding = styled.div``;
 
 const WrapperInfo = styled.div`
   display: flex;
@@ -29,7 +29,7 @@ const WrapperInfo = styled.div`
 const WrapperText = styled.div`
   display: flex;
   flex-direction: column;
-  width:100%;
+  width: 100%;
   max-width: 100px;
 `;
 const Avatar = styled.div`
@@ -53,10 +53,14 @@ const Name = styled.h3`
   margin-bottom: 5px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow:hidden;
+  overflow: hidden;
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
   @media (max-width: 600px) {
-  font-size: 1rem;
-  margin-top: 5px;
+    font-size: 1rem;
+    margin-top: 5px;
   }
 `;
 const Status = styled.span`
@@ -65,14 +69,13 @@ const Status = styled.span`
   padding: 2px 5px;
   border-radius: 5px;
   width: 100%;
-  display:flex;
+  display: flex;
 `;
-const WrapperFeaturesPadding = styled.div`
-`;
+const WrapperFeaturesPadding = styled.div``;
 const Features = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-end;
 `;
 const Feature = styled.div`
   background: #f5f5f5;
@@ -88,11 +91,15 @@ const Feature = styled.div`
   }
 `;
 
-const FeatureVideoWrapper = styled(Feature)``;
+const FeatureVideoWrapper = styled(Feature)`
+  margin-left: 10px;
+`;
 const IconVideo = styled(VideoCamera)`
   width: 1.4rem;
 `;
-const FeatureOtherWrapper = styled(Feature)``;
+const FeatureOtherWrapper = styled(Feature)`
+  margin-left: 10px;
+`;
 const IconOther = styled(DotsVertical)`
   width: 1.4rem;
 `;
@@ -111,30 +118,30 @@ const Offline = styled(Circle)`
   color: #aaa;
 `;
 const StyledColLeft = styled(Col)`
-  width: 80%;
-  @media (max-width:1000px){
-  width: calc(100% - 180px);
+  width: 70%;
+  @media (max-width: 1000px) {
+    width: calc(100% - 180px);
   }
 `;
 const StyledColRight = styled(Col)`
-  width: 20%;
-  margin-left:auto;
-  @media (max-width:1000px){
-  width: 180px;
+  width: 30%;
+  margin-left: auto;
+  @media (max-width: 1000px) {
+    width: 180px;
   }
-`
+`;
 const FutureSwitchWrapper = styled(Feature)`
-  @media (max-width:500px){
+  margin-left: 10px;
+  @media (max-width: 500px) {
     visibility: hidden;
   }
 `;
 
 const StatusText = styled.span``;
-function ChatHeader({ WindowEmpty }) {
+function ChatHeader({ WindowEmpty, onClickChatInfor }) {
   const [isDark, setIsDark] = useToggle(false);
   const listAccountOnline = useSelector(getUsersOnline);
   const partner = useSelector(getPartner);
-
   const toggleTheme = () => {
     setIsDark(!isDark);
   };
@@ -144,17 +151,29 @@ function ChatHeader({ WindowEmpty }) {
   const handleAvatarClick = () => {
     navigate(`userinfor/${roomId}`);
   };
+  const handleIconOtherClick = () => {
+    onClickChatInfor();
+  };
+  var Nickname = null;
+  const listRelationship = useSelector(getListRelationshipSelector);
+  const user = listRelationship.filter(
+    (item) =>
+      +item?.RelatedAccountId === +roomId ||
+      +item?.RelatingAccountId === +roomId
+  )[0];
+  if(+user?.RelatingAccountId===+roomId) Nickname=user?.RelatingAccountNickname;
+  else Nickname=user?.RelatedAccountNickname;
   return (
     <Wrapper WindowEmpty={WindowEmpty}>
       <Row className="w-100">
-        <StyledColLeft lg={10}>
+        <StyledColLeft lg={8}>
           <WrapperInfoPadding>
             <WrapperInfo>
               <Avatar onClick={handleAvatarClick}>
-                <img src={partner.Avatar} alt="avatar" />
+                <img src={user.Avatar} alt="avatar" />
               </Avatar>
               <WrapperText>
-                <Name>{partner.Name}</Name>
+                <Name onClick={handleAvatarClick}>{Nickname?Nickname:user.Name}</Name>
                 <Status>
                   {listAccountOnline?.includes(partner?.AccountId) ? (
                     <>
@@ -172,7 +191,7 @@ function ChatHeader({ WindowEmpty }) {
             </WrapperInfo>
           </WrapperInfoPadding>
         </StyledColLeft>
-        <StyledColRight lg={2}>
+        <StyledColRight lg={4}>
           <WrapperFeaturesPadding className="h-100">
             <Features className="h-100">
               <FutureSwitchWrapper onClick={toggleTheme}>
@@ -181,7 +200,7 @@ function ChatHeader({ WindowEmpty }) {
               <FeatureVideoWrapper>
                 <IconVideo />
               </FeatureVideoWrapper>
-              <FeatureOtherWrapper>
+              <FeatureOtherWrapper onClick={handleIconOtherClick}>
                 <IconOther />
               </FeatureOtherWrapper>
             </Features>

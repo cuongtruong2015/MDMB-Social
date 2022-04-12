@@ -1,4 +1,5 @@
 import { CheckCircle } from '@styled-icons/heroicons-solid';
+import { PlayCircle } from '@styled-icons/boxicons-regular';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import CardLink from 'features/ChatOverView/ChatWindow/WindowContent/Messages/CardMessage/CardLink';
@@ -12,6 +13,7 @@ import {
   Navigate,
   useNavigate,
 } from '../../../../../../../node_modules/react-router-dom/index';
+import LazyLoad from 'react-lazy-load';
 dayjs.extend(relativeTime);
 
 const Wrapper = styled.div`
@@ -109,13 +111,25 @@ const SentStatus = styled(CheckCircle)`
   color: #4849a1;
 `;
 const ImageMessageWrapper = styled.div`
+    max-height: 200px;
+    cursor: pointer;
+
   img,
   video {
-    max-width: 100%;
-    max-height: 250px;
+    max-width: 200px;
+    max-height: 200px;
     margin-bottom: 10px;
     border-radius: 4%;
+    &:hover {
+    }
   }
+`;
+const IconPlay = styled(PlayCircle)`
+  position: relative;
+  width: 4rem;
+  margin-top: -200%;
+  margin-left: 20%;
+  color:#fff;
 `;
 const FileMessageWrapper = styled.div`
   display: flex;
@@ -192,19 +206,23 @@ function CardMessage(props) {
                 ) : type === 2 ? (
                   <ImageMessageWrapper>
                     <video src={content} alt="" />
+                    <div>
+                    <IconPlay />
+
+                    </div>
                   </ImageMessageWrapper>
                 ) : (
                   <FileMessageWrapper
-                    onClick={
-                      ()=>(window.location.href = content)
-                    }
+                    onClick={() => (window.location.href = content)}
                   >
                     <FileIcon />
                     <NameFile>
-                      {''.concat(
-                        content.substring(
-                          content.indexOf('%2F') + 3,
-                          content.indexOf('?')
+                      {decodeURIComponent(
+                        ''.concat(
+                          content?.substring(
+                            content?.indexOf('%2F') + 3,
+                            content?.indexOf('?')
+                          )
                         )
                       )}
                     </NameFile>

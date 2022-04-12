@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDebounce } from 'hooks';
 import { SetNotification } from 'components/Notification/notification';
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 
 const SideBar = styled.div`
   width: 100%;
@@ -154,6 +155,35 @@ function ChatConversations({ onSelectRoom }) {
     setSearchTerm('');
   };
 
+  const listRelationship = useSelector(getListRelationshipSelector);
+  const getNickName = (i) => {
+    var Nickname = null;
+    const user = listRelationship.filter(
+      (item) =>
+        +item?.RelatedAccountId === +i?.AccountId ||
+        +item?.RelatingAccountId === +i?.AccountId
+    )[0];
+    if (+user?.RelatingAccountId === +i?.AccountId)
+      Nickname = user?.RelatingAccountNickname;
+    else Nickname = user?.RelatedAccountNickname;
+    return Nickname;
+  };
+  const getNotification = (i) => {
+    var notification = 0;
+    const user = listRelationship.filter(
+      (item) =>
+        +item?.RelatedAccountId === +i?.AccountId ||
+        +item?.RelatingAccountId === +i?.AccountId
+    )[0];
+    notification = user?.Notification;
+    if (
+      (i.AccountId < accountId && notification === 1) ||
+      (i.AccountId > accountId && notification === 2) ||
+      notification === 3
+    )
+      return false;
+    return true;
+  };
   return (
     <SideBar>
       <Logo>MDMB Social</Logo>
@@ -185,9 +215,7 @@ function ChatConversations({ onSelectRoom }) {
       {listFriend?.length === 0 && (
         <>
           <Notification>Not Found</Notification>
-          <NotificationContent>
-            Conversation not found!  
-          </NotificationContent>
+          <NotificationContent>Conversation not found!</NotificationContent>
         </>
       )}
       <Wrapper>
@@ -196,6 +224,8 @@ function ChatConversations({ onSelectRoom }) {
             key={index}
             onSelectRoom={onSelectRoom}
             conversation={item}
+            nickname={getNickName(item)}
+            notification={getNotification(item)}
           />
         ))}
       </Wrapper>

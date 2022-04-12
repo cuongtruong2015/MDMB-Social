@@ -35,8 +35,11 @@ const userApi = {
     const url = `/account/list-friend-recommended?AccountId=${AccountId}`;
     return axiosClient.get(url);
   },
-  
-  
+  updateAccountRelationship: ({ RelatingAccountId, RelatedAccountId, Type, ButtonIcon, RelatingAccountNickname, RelatedAccountNickname, Notification }) => {
+    const url = `/account/update-friend-relationship?RelatingAccountId=${RelatingAccountId || ""}&RelatedAccountId=${RelatedAccountId || ""}&Type=${Type || ""}&ButtonIcon=${ButtonIcon || ""}&RelatingAccountNickname=${RelatingAccountNickname || ""}&RelatedAccountNickname=${RelatedAccountNickname || ""}&Notification=${Notification == 0 ? 0 : Notification || ""}`;
+    return axiosClient.get(url);
+  },
+
 };
 
 export default userApi;

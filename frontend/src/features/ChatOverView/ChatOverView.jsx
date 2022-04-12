@@ -37,7 +37,7 @@ import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 import messageAudio from 'assets/audio/messengerSound.mp3';
 import { getListRelationship } from 'app/actions/listRelationship';
 import { getNotificationCount } from 'app/actions/notificationCount';
-
+import ChatInformation from './ChatInformation/ChatInformation';
 const Wrapper = styled(Container)`
   height: 100vh;
   overflow: hidden;
@@ -59,11 +59,14 @@ const ColBS1 = styled(Col)`
 const ColBS2 = styled(Col)`
   padding-left: 0;
   padding-right: 0;
-  width: calc(75% - 80px);
+  /* width: calc(75% - 80px); */
   @media (max-width: 1250px) {
     width: calc(100% - 90px);
     display: ${(props) => (props.active ? 'unset' : 'none')};
   }
+  width: ${({ showinforright }) =>
+    showinforright ? 'calc(50% - 80px)' : 'calc(75% - 80px)'};
+  transition: all 0.3s;
 `;
 const LeftBar = styled(Col)`
   padding-left: 0;
@@ -71,7 +74,15 @@ const LeftBar = styled(Col)`
   width: 80px;
   background-color: #efeff3;
 `;
-
+const ColBS3 = styled(Col)`
+  padding-left: 0;
+  padding-right: 0;
+  width: 25%;
+  /* width: ${(showInforRight) => (showInforRight ? '25%' : '0px')};
+  ${({ showInforRight }) =>
+    showInforRight ? 'display:unset' : 'display:none'}; */
+  transition: all 0.3s;
+`;
 function ChatOverView() {
   const auth = useSelector(getAuth);
   const dispatch = useDispatch();
@@ -156,11 +167,11 @@ function ChatOverView() {
     }
   };
 
-  const handleSendMessage = (message,type) => {
-    socket?.emit('chat message', message,type, roomId, (status, data) => {
+  const handleSendMessage = (message, type) => {
+    socket?.emit('chat message', message, type, roomId, (status, data) => {
       if (status === 'ok' && +data.ToAccount === +roomId) {
         dispatch(sendMessage(data));
-        dispatch(updateListConversationWithSentMessage(data));
+        dispatch(updateListConversationWithSentMessage(data, 0));
       }
     });
   };
@@ -204,19 +215,40 @@ function ChatOverView() {
     dispatch(getListConversation(AccountId));
     dispatch(getListRelationship(AccountId));
   }, []);
-  //end notification  
+  //end notification
   //sendfile
-  const handleSendFiles =  (files) => {
+  const handleSendFiles = (files) => {
     files?.map((file) => {
-      var Type = file.type.includes('image') ? 1 : file.type.includes('video') ? 2 : 3;
-      socket?.emit('chat message', file.downloadURL,Type, roomId, (status, data) => {
-        if (status === 'ok' && +data.ToAccount === +roomId) {
-          dispatch(sendMessage(data));
-          dispatch(updateListConversationWithSentMessage(data));
+      var Type = file.type.includes('image')
+        ? 1
+        : file.type.includes('video')
+        ? 2
+        : 3;
+      socket?.emit(
+        'chat message',
+        file.downloadURL,
+        Type,
+        roomId,
+        (status, data) => {
+          if (status === 'ok' && +data.ToAccount === +roomId) {
+            dispatch(sendMessage(data));
+            dispatch(updateListConversationWithSentMessage(data, Type));
+          }
         }
-      });
-    })
-  }
+      );
+    });
+  };
+  //end sendfile
+  //Click ChatInfor
+  // var ShowInforRight = false;
+  const [showInforRight, setShowInforRight] = React.useState(false);
+  const handleClickChatInfor = () => {
+    setShowInforRight(!showInforRight);
+  };
+  React.useEffect(() => {
+    setShowInforRight(false);
+  },[roomId]);
+  //end Click ChatInfor
   return socket ? (
     <Wrapper fluid>
       <RowBS>
@@ -226,7 +258,13 @@ function ChatOverView() {
         <ColBS1 lg={3} xs={3} md={3} active={roomId ? 1 : 0}>
           <ChatConversations onSelectRoom={handleSelectRoomClick} />
         </ColBS1>
-        <ColBS2 lg={8} xs={8} md={8} active={roomId ? 1 : 0}>
+        <ColBS2
+          lg={8}
+          xs={8}
+          md={8}
+          active={roomId ? 1 : 0}
+          showinforright={showInforRight}
+        >
           {roomId ? (
             <ChatWindow
               onSendMessage={handleSendMessage}
@@ -234,12 +272,18 @@ function ChatOverView() {
               myAccountId={auth?.accountId}
               typing={typing}
               onSeenMessage={handleSeenMessage}
-              onSendFiles = {handleSendFiles}
+              onSendFiles={handleSendFiles}
+              onClickChatInfor={handleClickChatInfor}
             />
           ) : (
             <WindowEmpty />
           )}
         </ColBS2>
+        {showInforRight && (
+          <ColBS3>
+            <ChatInformation partnerId={roomId} />
+          </ColBS3>
+        )}
       </RowBS>
     </Wrapper>
   ) : (

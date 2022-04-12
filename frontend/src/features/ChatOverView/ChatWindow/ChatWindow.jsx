@@ -32,7 +32,7 @@ const RowBS = styled(Row)`
 
 const ColBS = styled(Col)``;
 
-function ChatWindow({ onSendMessage, onTyping, typing, onSeenMessage,onSendFiles }) {
+function ChatWindow({ onSendMessage, onTyping, typing, onSeenMessage,onSendFiles,onClickChatInfor }) {
   const { roomId } = useParams();
   const [hasFileInput, setHasFileInput] = React.useState(false);
   const listFile = (files) => {
@@ -41,7 +41,7 @@ function ChatWindow({ onSendMessage, onTyping, typing, onSeenMessage,onSendFiles
   };
   return (
     <Wrapper>
-      <ChatHeader WindowEmpty={roomId ? false : true} />
+      <ChatHeader WindowEmpty={roomId ? false : true} onClickChatInfor={onClickChatInfor}/>
       <RowMessageInner>
         <WrapperMessageContent hasFileInput={hasFileInput}>
           <WindowContent typing={typing} onSeenMessage={onSeenMessage} />

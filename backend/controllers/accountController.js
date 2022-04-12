@@ -513,13 +513,13 @@ function AddFriend(req, res) {
 
   if (!RelatingAccountId || !RelatedAccountId || !Type) return res.status(200).send({ result: "Missing Infor" });
 
-  if (Type=='delete') AccountDAO.deleteRelationship(RelatingAccountId, RelatedAccountId, (result)=>{
+  if (Type == 'delete') AccountDAO.deleteRelationship(RelatingAccountId, RelatedAccountId, (result) => {
     return res.status(201).send({ result: result });
   })
   else
-  AccountDAO.setRelationship(RelatingAccountId, RelatedAccountId, Type, (result) => {
-    return res.status(201).send({ result: result });
-  })
+    AccountDAO.setRelationship(RelatingAccountId, RelatedAccountId, Type, (result) => {
+      return res.status(201).send({ result: result });
+    })
 }
 
 async function getListHaveRelationship(req, res) {
@@ -528,14 +528,27 @@ async function getListHaveRelationship(req, res) {
   if (listFriend) res.status(200).send({ result: listFriend });
   else res.status(201).send({ result: "get list relationship failed" });
 }
-async function getListFriendRecommended(req, res){
+async function getListFriendRecommended(req, res) {
   var AccountId = req.query.AccountId;
 
-  if(!AccountId) return res.status(201).send({result:[]});
+  if (!AccountId) return res.status(201).send({ result: [] });
 
-  let listFriendRecommended= await AccountDAO.getListFriendRecommended(AccountId);
+  let listFriendRecommended = await AccountDAO.getListFriendRecommended(AccountId);
   if (listFriendRecommended[0]) res.status(200).send({ result: listFriendRecommended[0] });
   else res.status(201).send({ result: "get list relationship failed" });
+}
+async function updateAccountRelationship(req, res) {
+  var RelatingAccountId = req.query.RelatingAccountId;
+  var RelatedAccountId = req.query.RelatedAccountId;
+  var Type = req.query.Type;
+  var ButtonIcon = req.query.ButtonIcon;
+  var RelatingAccountNickname = req.query.RelatingAccountNickname;
+  var RelatedAccountNickname = req.query.RelatedAccountNickname;
+  var Notification = req.query.Notification;
+  if (!RelatingAccountId || !RelatedAccountId) return res.status(201).send({ result: false, description: "Missing Infor" });
+  let result = await AccountDAO.updateAccountRelationship(RelatingAccountId, RelatedAccountId, Type, ButtonIcon, RelatingAccountNickname, RelatedAccountNickname, Notification);
+  res.status(200).send({ result: result });
+
 }
 module.exports = {
   login,
@@ -552,5 +565,6 @@ module.exports = {
   getAccountListSearching,
   AddFriend,
   getListHaveRelationship,
-  getListFriendRecommended
+  getListFriendRecommended,
+  updateAccountRelationship
 };

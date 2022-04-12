@@ -258,6 +258,8 @@ function ChatBox({
       if (fileTemp) onSendFiles(fileTemp);
     }, 1000);
     setShowPicker(false);
+    console.log()
+
   };
   const onPreviewEmoji = () => {
     setShowPicker((prev) => !prev);
@@ -368,6 +370,8 @@ function ChatBox({
                 }
                 onFocus={() => setShowPicker(false)}
                 rows={1}
+                placeholder="Aa"
+                autoFocus
               />
               <FeaturesRight>
                 <WrapperDialog>

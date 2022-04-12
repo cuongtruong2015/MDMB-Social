@@ -159,16 +159,19 @@ const updateListConversationWithSentMessageSuccess = (newListConversation) => {
 };
 
 export const updateListConversationWithSentMessage =
-  (data) => (dispatch, getState) => {
+  (data, Type) => (dispatch, getState) => {
     const {
       conversations: { listConversation },
     } = getState();
+    console.log(Type)
     dispatch(updateListConversationWithSentMessageStart());
     const newListConversation = listConversation.filter((e) => {
       if (e.AccountId === data.ToAccount) {
         e.LastMessage = data.Content;
         e.SentDate = data.SentDate;
         e.SeenDate = data.SeenDate;
+        if(Type)
+        e.Type=Type;
       }
       return e;
     });

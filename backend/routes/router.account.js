@@ -19,4 +19,5 @@ api.get("/account-list-searching", authMiddleware.verifyToken, accountController
 api.get("/insert-relationship", authMiddleware.verifyToken, accountController.AddFriend);
 api.get("/list-have-relationship", authMiddleware.verifyToken, accountController.getListHaveRelationship);
 api.get("/list-friend-recommended", authMiddleware.verifyToken, accountController.getListFriendRecommended);
+api.get("/update-friend-relationship", authMiddleware.verifyToken, accountController.updateAccountRelationship);
 module.exports = api;

@@ -24,7 +24,7 @@ function getAccountByEmail(Email, Callback) {
 
   // var con = connection.createConnection();
   // con.connect(function (err) {
-  connection.pool.getConnection(function(err, con) {
+  connection.pool.getConnection(function (err, con) {
     if (err) throw err;
     // console.log("Connected!");
     var sql = `SELECT * FROM Account Where (Email=?)`;
@@ -235,7 +235,7 @@ async function getListFriendWithLastMessageCountUnseen(AccountId) {
   let sql = `CALL MDMB.proc_get_list_friend_with_last_message_count_unseen(?);`
   return new Promise((resolve, reject) => {
     // var con = connection.createConnection();
-    
+
     connection.pool.getConnection(function (err, con) {
       if (err) throw err;
       con.query(sql, [AccountId],
@@ -352,7 +352,7 @@ function deleteRelationship(RelatingAccountId, RelatedAccountId, Callback) {
   });
 }
 function getListHaveRelationship(AccountId) {
-  let sql = `select RelatingAccountId,RelatedAccountId,Type,LastOnline,CreatedDate,Gender,Birthday,Avatar,Name,Email,Phone from MDMB.Account as acc join MDMB.AccountRelationship as accrel on (acc.AccountID = accrel.RelatingAccountId or acc.AccountID=accrel.RelatedAccountId)
+  let sql = `select * from MDMB.Account as acc join MDMB.AccountRelationship as accrel on (acc.AccountID = accrel.RelatingAccountId or acc.AccountID=accrel.RelatedAccountId)
   where (accrel.RelatingAccountId<? and accrel.RelatedAccountId = ? and AccountId !=?)
    or (accrel.RelatedAccountId>? and accrel.RelatingAccountId = ? and AccountId !=?);`;
   return new Promise((resolve, reject) => {
@@ -384,12 +384,51 @@ function getListFriendRecommended(AccountId) {
       con.query(sql, [AccountId],
         function (err, result) {
           connection.closeConnection(con);
-          if (err) return reject({result:'error'});
+          if (err) return reject({ result: 'error' });
           resolve(result);
         });
     });
   });
 }
+
+function updateAccountRelationship(RelatingAccountId, RelatedAccountId, Type, ButtonIcon, RelatingAccountNickname, RelatedAccountNickname, Notification) {
+  let res;
+  // var con = connection.createConnection();
+  return new Promise((resolve, reject) => {
+    // con.connect(async function (err) {
+    connection.pool.getConnection(async function (err, con) {
+      if (err) throw err;
+      // await connection.setTimeZone(con);
+      var arrayArgs=[];
+      _ = [Type, ButtonIcon, RelatingAccountNickname, RelatedAccountNickname, Notification];
+      for (let i = 0; i < _.length; i++) {
+        if(_[i])arrayArgs.push(_[i]);
+      }
+      arrayArgs.push(RelatingAccountId);
+      arrayArgs.push(RelatedAccountId);
+      var sql = `Update MDMB.AccountRelationship
+      set Type = ${Type ? "?" : 'Type'},
+      ButtonIcon =  ${ButtonIcon ? "?" : 'ButtonIcon'},
+      RelatingAccountNickname = ${RelatingAccountNickname ? "?" : 'RelatingAccountNickname'},
+      RelatedAccountNickname = ${RelatedAccountNickname ? "?" : 'RelatedAccountNickname'},
+      Notification = ${Notification ? "?" : 'Notification'}
+      where RelatingAccountId=? and RelatedAccountId=?
+      `;
+      con.query(sql, arrayArgs,
+        function (err, result) {
+          // connection.closeConnection(con);
+          con.release();
+          if (err) {
+            resolve(false)
+            console.log(err)
+          };
+          res = result;
+          resolve(true);
+        });
+    });
+  });
+}
+
 module.exports = {
   getAccount,
   getAccountByEmail,
@@ -406,5 +445,6 @@ module.exports = {
   setRelationship,
   getListHaveRelationship,
   deleteRelationship,
-  getListFriendRecommended
+  getListFriendRecommended,
+  updateAccountRelationship
 }

@@ -7,7 +7,9 @@ import { useSelector } from 'react-redux';
 import { Circle } from '@styled-icons/boxicons-solid';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
+import React from 'react';
+import { BellOff, BellRing } from '@styled-icons/boxicons-solid';
 dayjs.extend(relativeTime);
 
 const Wrapper = styled.div`
@@ -125,8 +127,15 @@ const Offline = styled(Circle)`
   margin-left: -18px;
   margin-top: 40px;
 `;
+const NotificationOffIcon = styled(BellOff)`
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  margin-left: auto;
+  margin-right: 10%;
+`;
 
-function CardConversation({ onSelectRoom, conversation }) {
+function CardConversation({ onSelectRoom, conversation, nickname,notification }) {
   const {
     Name: name,
     Avatar: avatar,
@@ -140,11 +149,9 @@ function CardConversation({ onSelectRoom, conversation }) {
   } = conversation;
   const { roomId } = useParams();
   const listAccountOnline = useSelector(getUsersOnline);
-
   const onRoomChange = () => {
     onSelectRoom(conversation);
   };
-
   return (
     <Wrapper checked={+roomId === +conversation.AccountId}>
       <Row>
@@ -155,7 +162,7 @@ function CardConversation({ onSelectRoom, conversation }) {
               {listAccountOnline.includes(AccountId) ? <Online /> : <Offline />}
             </Avatar>
             <CardContent>
-              <Name> {name}</Name>
+              <Name> {nickname ? nickname : name}</Name>
               <MessageInner>
                 <Message>
                   {Type === 3
@@ -166,25 +173,31 @@ function CardConversation({ onSelectRoom, conversation }) {
                 </Message>
               </MessageInner>
             </CardContent>
+
             <Status>
               <Time>{lastMessage ? dayjs(SentDate).fromNow() : ''}</Time>
-              <StatusInner>
-                {UnseenMessage > 0 ? (
-                  <WrapperNewMessage>
-                    <LengthNewMessage>{UnseenMessage}</LengthNewMessage>
-                  </WrapperNewMessage>
-                ) : lastMessage ? (
-                  SeenDate ? (
+
+              {!notification ? (
+                <NotificationOffIcon />
+              ) : (
+                <StatusInner>
+                  {UnseenMessage > 0 ? (
+                    <WrapperNewMessage>
+                      <LengthNewMessage>{UnseenMessage}</LengthNewMessage>
+                    </WrapperNewMessage>
+                  ) : lastMessage ? (
+                    SeenDate ? (
+                      <SeenStatus Avatar={avatar} />
+                    ) : (
+                      <SentStatus />
+                    )
+                  ) : FromAccount !== roomId ? (
                     <SeenStatus Avatar={avatar} />
                   ) : (
                     <SentStatus />
-                  )
-                ) : FromAccount !== roomId ? (
-                  <SeenStatus Avatar={avatar} />
-                ) : (
-                  <SentStatus />
-                )}
-              </StatusInner>
+                  )}
+                </StatusInner>
+              )}
             </Status>
           </Card>
         </Col>
