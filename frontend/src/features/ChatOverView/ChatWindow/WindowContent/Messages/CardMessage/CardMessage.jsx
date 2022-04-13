@@ -145,7 +145,7 @@ const FileIcon = styled(File)`
   height: 2.5rem;
   padding: 0.5rem;
   border-radius: 50%;
-  background-color: #e8e8ea;
+  background-color:  ${({owner})=>owner? "#e8e8ea;": "#6956c9;"}
 `;
 const NameFile = styled.div`
   margin-left: 3px;
@@ -215,7 +215,7 @@ function CardMessage(props) {
                   <FileMessageWrapper
                     onClick={() => (window.location.href = content)}
                   >
-                    <FileIcon />
+                    <FileIcon owner={owner} />
                     <NameFile>
                       {decodeURIComponent(
                         ''.concat(
