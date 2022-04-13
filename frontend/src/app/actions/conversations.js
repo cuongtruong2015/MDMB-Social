@@ -163,7 +163,6 @@ export const updateListConversationWithSentMessage =
     const {
       conversations: { listConversation },
     } = getState();
-    console.log(Type)
     dispatch(updateListConversationWithSentMessageStart());
     const newListConversation = listConversation.filter((e) => {
       if (e.AccountId === data.ToAccount) {

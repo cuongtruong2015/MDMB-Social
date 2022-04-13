@@ -1,5 +1,5 @@
 import { Circle } from '@styled-icons/boxicons-solid';
-import { DotsVertical, VideoCamera } from '@styled-icons/heroicons-solid';
+import { DotsVertical, VideoCamera, InformationCircle } from '@styled-icons/heroicons-solid';
 import { getPartner } from 'app/selectors/chat';
 import { getUsersOnline } from 'app/selectors/socket';
 import ToggleTheme from 'components/ToggleTheme';
@@ -100,7 +100,7 @@ const IconVideo = styled(VideoCamera)`
 const FeatureOtherWrapper = styled(Feature)`
   margin-left: 10px;
 `;
-const IconOther = styled(DotsVertical)`
+const IconOther = styled(InformationCircle)`
   width: 1.4rem;
 `;
 const Online = styled(Circle)`

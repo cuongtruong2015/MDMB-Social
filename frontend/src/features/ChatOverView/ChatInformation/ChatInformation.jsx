@@ -129,6 +129,7 @@ const EditIcon = styled(EditAlt)`
   height: 1.5rem;
 `;
 export default function ChatInformation({ partnerId }) {
+  console.log(partnerId);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const listAccountOnline = useSelector(getUsersOnline);
@@ -227,7 +228,14 @@ export default function ChatInformation({ partnerId }) {
       }
     });
   };
-
+  const OnlineStatus =
+    LastOnline < 5 || listAccountOnline?.includes(partnerId)
+      ? 'Online'
+      : LastOnline < 60
+      ? LastOnline.toFixed(0) + ' minutes ago'
+      : LastOnline / 60 < 24
+      ? (LastOnline / 60).toFixed(0) + ' hours ago'
+      : (LastOnline / 60 / 24).toFixed(0) + ' days ago';
   return (
     <Wrapper>
       <Avatar>
@@ -236,15 +244,7 @@ export default function ChatInformation({ partnerId }) {
       <Name onClick={redirecteUserInfor}>
         {Nickname ? Nickname : user?.Name}
       </Name>
-      <Online>
-        {LastOnline < 5 || listAccountOnline?.includes(partnerId)
-          ? Online
-          : LastOnline < 60
-          ? LastOnline.toFixed(0) + ' minutes ago'
-          : LastOnline / 60 < 24
-          ? (LastOnline / 60).toFixed(0) + ' hours ago'
-          : (LastOnline / 60 / 24).toFixed(0) + ' days ago'}
-      </Online>
+      <Online>{OnlineStatus}</Online>
       <Featuter>
         <FeatuterWrapper>
           <Logo onClick={redirecteUserInfor} />
@@ -280,7 +280,7 @@ export default function ChatInformation({ partnerId }) {
 
       <CustomFeatureWrapper show={showMediaFile}>
         <HeaderCustom onClick={handleMediaFileClick}>
-          <HeaderName>Medias, Files</HeaderName>
+          <HeaderName>Media, Files</HeaderName>
           {showMediaFile ? <DropdownAlreadyIcon /> : <DropdownIcon />}
         </HeaderCustom>
         {showMediaFile && (

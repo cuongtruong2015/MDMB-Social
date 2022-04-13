@@ -143,7 +143,22 @@ function ChatOverView() {
 
   React.useEffect(() => {
     socket?.on('chat message', (data) => {
-      audio.play();
+      var noti;
+      const user = listRelationship.filter(
+        (item) =>
+          item.RelatedAccountId == data?.FromAccount ||
+          item.RelatingAccountId == data?.FromAccount
+      )[0];
+      if (
+        (+user?.RelatingAccountId === +data?.FromAccount &&
+          user?.Notification === 1) ||
+        (+user?.RelatedAccountId === +data?.FromAccount &&
+          user?.Notification === 2) ||
+        notification === 3
+      )
+        noti = false;
+      else noti = true;
+      if (noti) audio.play();
       if (roomId) {
         if (
           data.ToAccount === auth?.accountId &&
@@ -247,7 +262,8 @@ function ChatOverView() {
   };
   React.useEffect(() => {
     setShowInforRight(false);
-  },[roomId]);
+  }, [roomId]);
+
   //end Click ChatInfor
   return socket ? (
     <Wrapper fluid>
@@ -263,7 +279,7 @@ function ChatOverView() {
           xs={8}
           md={8}
           active={roomId ? 1 : 0}
-          showinforright={showInforRight}
+          showinforright={showInforRight ? 1 : 0}
         >
           {roomId ? (
             <ChatWindow

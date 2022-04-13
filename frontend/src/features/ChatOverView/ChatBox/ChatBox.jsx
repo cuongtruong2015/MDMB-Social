@@ -246,7 +246,7 @@ function ChatBox({
   };
   const onSendClick = async (e) => {
     e.preventDefault();
-    if ((!message  || message.trim().length === 0)&& !files[0]) return;
+    if ((!message || message.trim().length === 0) && !files[0]) return;
     if (message.length > 1000) onSendMessage(message.slice(0, 1000), 0);
     else onSendMessage(message, 0);
     //type 0 : text
@@ -258,8 +258,7 @@ function ChatBox({
       if (fileTemp) onSendFiles(fileTemp);
     }, 1000);
     setShowPicker(false);
-    console.log()
-
+    console.log();
   };
   const onPreviewEmoji = () => {
     setShowPicker((prev) => !prev);
@@ -277,7 +276,7 @@ function ChatBox({
   };
   const [files, setFiles] = React.useState([]);
   const onFileChange = async (e) => {
-    const check = await checkFileSize(Object.values(e.target.files), 5);
+    const check = await checkFileSize(Object.values(e.target.files), 5, 5);
     if (check) setFiles(Object.values(e.target.files));
     e.target.value = null;
   };
@@ -339,7 +338,7 @@ function ChatBox({
             <FeaturesTop hasfile={files[0] ? true : false}>
               <IconSticker />
               <IConUploadImage onClick={onUploadFile} />
-              <IconUploadFile />
+              <IconUploadFile onClick={onUploadFile} />
             </FeaturesTop>
           </Col>
         </Row>

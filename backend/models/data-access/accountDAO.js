@@ -367,7 +367,9 @@ function getListHaveRelationship(AccountId) {
           if (err) return reject(err);
           let accounts = [];
           for (let i = 0; i < result.length; i++) {
-            accounts.push(result[i]);
+            let temp = result[i]; 
+            delete temp.Password;
+            accounts.push(temp);
           }
           resolve(accounts);
         });

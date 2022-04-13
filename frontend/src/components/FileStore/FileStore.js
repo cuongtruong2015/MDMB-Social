@@ -5,8 +5,17 @@ import { getStorage } from "firebase/storage";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { useState } from "react";
 
-export function checkFileSize(files, size) {
+export function checkFileSize(files, size, length) {
+
   return new Promise((resolve, reject) => {
+    if (length && files.length > length) {
+      Swal.fire({
+        icon: 'warning',
+        allowOutsideClick: false,
+        title: `Please pick less than ${length} files`,
+      });
+      resolve(false);
+    }
     files?.map((item, index) => {
       if ((item?.size / 1024 / 1024).toFixed(2) > size) {
         Swal.fire({
