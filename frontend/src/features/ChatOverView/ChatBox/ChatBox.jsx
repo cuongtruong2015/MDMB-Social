@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { HoverMixin } from 'styles/mixinStyles';
 import { X, PlayCircle } from '@styled-icons/boxicons-regular';
 import { checkFileSize, uploadFile } from 'components/FileStore/FileStore';
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -153,6 +154,20 @@ const SendMessenger = styled(Send)`
     cursor: pointer;
   }
 `;
+const SendIconHolder = styled.div`
+  font-size: 20px;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 5px;
+  margin-top: 10%;
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 50%;
+  &:hover {
+    filter: brightness(0.8);
+  }
+`;
 const EmojiIcon = styled(EmojiHappy)`
   width: 1.5rem;
   height: 1.5rem;
@@ -215,7 +230,6 @@ function ChatBox({
   const { roomId } = useParams();
   const chatBoxRef = React.useRef(null);
   const partner = useSelector(getPartner);
-
   React.useEffect(() => {
     if (!showPicker) chatBoxRef.current.focus();
   }, [showPicker]);
@@ -300,6 +314,18 @@ function ChatBox({
   const handleAddMoreFileClick = () => {
     fileAddRef.current.click();
   };
+  //Send Icon button
+  const listRelationship = useSelector(getListRelationshipSelector);
+  const user = listRelationship.filter(
+    (item) =>
+      item.RelatedAccountId == roomId || item.RelatingAccountId == roomId
+  )[0];
+  const buttonIcon = user?.ButtonIcon;
+  const handleOnIconSendButton = () => {
+    onSendMessage(user?.ButtonIcon, 0);
+  };
+  //
+
   // console.log((files[0]?.size / 1024 / 1024).toFixed(2));
   return (
     <Wrapper WindowEmpty={WindowEmpty}>
@@ -389,7 +415,13 @@ function ChatBox({
                   )}
                 </WrapperDialog>
                 <EmojiIcon onClick={onPreviewEmoji} />
-                <SendMessenger onClick={onSendClick} />
+                {buttonIcon ? (
+                  <SendIconHolder onClick={handleOnIconSendButton}>
+                    {buttonIcon}
+                  </SendIconHolder>
+                ) : (
+                  <SendMessenger onClick={onSendClick} />
+                )}
               </FeaturesRight>
             </WrapperInput>
           </Col>

@@ -15,6 +15,17 @@ import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 import { useNavigate } from '../../../../node_modules/react-router-dom/index';
 import Swal from 'sweetalert2';
 import { getListRelationship } from 'app/actions/listRelationship';
+import {
+  changeIcon,
+  ChangeNickname,
+  handleNotification,
+} from 'utils/ChatInfor';
+import { getSocket } from 'app/selectors/socket';
+import { NimblePicker } from 'emoji-mart';
+import data from 'emoji-mart/data/google.json';
+import { X } from '@styled-icons/heroicons-outline';
+import { Modal, Button } from 'react-bootstrap';
+import { FastForwardCircle } from '../../../../node_modules/@styled-icons/boxicons-regular/index';
 
 const Wrapper = styled.div`
   padding: 10% 0px 10% 0px;
@@ -128,8 +139,62 @@ const EditIcon = styled(EditAlt)`
   width: 1.5rem;
   height: 1.5rem;
 `;
-export default function ChatInformation({ partnerId }) {
-  console.log(partnerId);
+const EmojiModal = styled(Modal)`
+  width: fit-content;
+  height: fit-content;
+  margin-left: 40%;
+  margin-top: 5%;
+  justify-content: center;
+  background-color: transparent;
+  .modal-content {
+    background-color: transparent;
+  }
+`;
+
+const HeaderEmojiDialog = styled.div`
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+`;
+const CurrentEmojiWrapper = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+const Text = styled.div``;
+const EmojiHolder = styled.div`
+  border: none;
+  margin-left: 10px;
+`;
+const RemoveEmojiIcon = styled(X)`
+  width: 1.2rem;
+  height: 1.2rem;
+  text-align: center;
+`;
+const ButtonRemoveEmoji = styled.button`
+  white-space: nowrap;
+  display: flex;
+  border: 1px solid #e6e3e3;
+  padding: 4px;
+  border-radius: 6px;
+  background-color: #e6e3e3;
+  margin-left: auto;
+  margin-right: 20px;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    filter: brightness(70%);
+  }
+`;
+const BodyModal = styled.div`
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #e6e3e3;
+  border-radius: 10px;
+`;
+export default function ChatInformation({ partnerId, userInfo }) {
+  const socket = useSelector(getSocket);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const listAccountOnline = useSelector(getUsersOnline);
@@ -138,7 +203,6 @@ export default function ChatInformation({ partnerId }) {
     (item) =>
       item.RelatedAccountId == partnerId || item.RelatingAccountId == partnerId
   )[0];
-
   var Nickname = null;
   var notification = user?.Notification;
   if (+user?.RelatingAccountId === +partnerId)
@@ -167,66 +231,7 @@ export default function ChatInformation({ partnerId }) {
     navigate(`userinfor/${partnerId}`);
   };
   const handleNotificationClick = () => {
-    Swal.fire({
-      title: `Do you want to turn ${notification ? 'off' : 'on'} notification?`,
-      showDenyButton: notification ? true : false,
-      showConfirmButton: notification ? false : true,
-      showCancelButton: true,
-      confirmButtonText: 'Turn on',
-      denyButtonText: `Turn off`,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        /* Turn on notificafion*/
-        var noti = 0;
-        const userNoti = user.Notification;
-        if (+user.RelatingAccountId === +partnerId && userNoti == 1) noti = 0;
-        if (+user.RelatingAccountId === +partnerId && userNoti == 2) noti = 2;
-        if (+user.RelatedAccountId === +partnerId && userNoti == 2) noti = 0;
-        if (+user.RelatedAccountId === +partnerId && userNoti == 1) noti = 1;
-        if (+user.RelatingAccountId === +partnerId && userNoti == 3) noti = 2;
-        if (+user.RelatedAccountId === +partnerId && userNoti == 3) noti = 1;
-        const rs = await userApi
-          .updateAccountRelationship({
-            RelatingAccountId: user.RelatingAccountId,
-            RelatedAccountId: user.RelatedAccountId,
-            Notification: noti,
-          })
-          .then((rs) => {
-            dispatch(
-              getListRelationship(
-                +user?.RelatingAccountId === +partnerId
-                  ? user.RelatedAccountId
-                  : user.RelatingAccountId
-              )
-            );
-            if (rs?.result) Swal.fire('Notification is on', '', 'success');
-          });
-      } else if (result.isDenied) {
-        /* Turn off notificafion*/
-        var noti = 3;
-        const userNoti = user.Notification;
-        if (+user.RelatingAccountId === +partnerId && userNoti == 0) noti = 1;
-        if (+user.RelatedAccountId === +partnerId && userNoti == 0) noti = 2;
-        if (+user.RelatingAccountId === +partnerId && userNoti == 2) noti = 3;
-        if (+user.RelatedAccountId === +partnerId && userNoti == 1) noti = 3;
-        const rs = await userApi
-          .updateAccountRelationship({
-            RelatingAccountId: user.RelatingAccountId,
-            RelatedAccountId: user.RelatedAccountId,
-            Notification: noti,
-          })
-          .then((rs) => {
-            dispatch(
-              getListRelationship(
-                +user?.RelatingAccountId === +partnerId
-                  ? user.RelatedAccountId
-                  : user.RelatingAccountId
-              )
-            );
-            if (rs?.result) Swal.fire('Notification is off', '', 'success');
-          });
-      }
-    });
+    handleNotification(Swal, dispatch, user, userApi, notification, partnerId);
   };
   const OnlineStatus =
     LastOnline < 5 || listAccountOnline?.includes(partnerId)
@@ -236,14 +241,63 @@ export default function ChatInformation({ partnerId }) {
       : LastOnline / 60 < 24
       ? (LastOnline / 60).toFixed(0) + ' hours ago'
       : (LastOnline / 60 / 24).toFixed(0) + ' days ago';
+
+  //change Nickname
+  const HandleChangeNickname = () => {
+    ChangeNickname(dispatch, socket, Swal, user, Nickname, userInfo, userApi);
+  };
+  const [showEmojiDialog, setShowEmojiDialog] = React.useState(false);
+  const handleEmojiCustomClick = () => {
+    setShowEmojiDialog(true);
+  };
+  const [currentEmoji, setCurrentEmoji] = React.useState(user.ButtonIcon);
+  const onEmojiClick = (data) => {
+    setCurrentEmoji(data.native);
+    setShowEmojiDialog(false);
+    changeIcon(data.native, user, userApi, dispatch);
+  };
   return (
     <Wrapper>
+      <EmojiModal
+        show={showEmojiDialog}
+        onHide={() => {
+          setShowEmojiDialog(false);
+        }}
+      >
+        <BodyModal>
+          <HeaderEmojiDialog>Pick Your Button Emoji</HeaderEmojiDialog>
+          <CurrentEmojiWrapper>
+            <Text>Current Icon:</Text>
+            {currentEmoji && <EmojiHolder>{currentEmoji}</EmojiHolder>}
+            <ButtonRemoveEmoji>
+              <RemoveEmojiIcon />
+              Remove
+            </ButtonRemoveEmoji>
+          </CurrentEmojiWrapper>
+          <NimblePicker
+            style={{
+              border: '0px',
+              borderRadius: '0px',
+            }}
+            onSelect={onEmojiClick}
+            native={true}
+            data={data}
+            set={'google'}
+            emojiSize={32}
+            perLine={6}
+            sheetSize={32}
+            showSkinTones={false}
+            skinTone={1}
+            showPreview={false}
+            showSearch={false}
+          />
+        </BodyModal>
+      </EmojiModal>
+
       <Avatar>
         <img src={user?.Avatar} alt="avatar" />
       </Avatar>
-      <Name onClick={redirecteUserInfor}>
-        {Nickname ? Nickname : user?.Name}
-      </Name>
+      <Name onClick={redirecteUserInfor}>{user?.Name}</Name>
       <Online>{OnlineStatus}</Online>
       <Featuter>
         <FeatuterWrapper>
@@ -264,11 +318,11 @@ export default function ChatInformation({ partnerId }) {
         </HeaderCustom>
         {showCustomizeChat && (
           <>
-            <CustomFeature>
+            <CustomFeature onClick={handleEmojiCustomClick}>
               <IconHolder>😆</IconHolder>
               <NameCustom>Change send emotion</NameCustom>
             </CustomFeature>
-            <CustomFeature>
+            <CustomFeature onClick={HandleChangeNickname}>
               <IconHolder>
                 <EditIcon />
               </IconHolder>

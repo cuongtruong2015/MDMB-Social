@@ -1,13 +1,14 @@
 const mysql = require('mysql');
 const config = require('../../config/db.config');
 
-function createConnection(){
+function createConnection() {
     return mysql.createConnection({
         host: config.HOST,
         user: config.USER,
         password: config.PASSWORD,
         database: config.DATABASE,
-        timezone: 'utc'
+        timezone: 'utc',
+        charset: 'utf8mb4',
     });
 }
 
@@ -17,6 +18,7 @@ const pool = mysql.createPool({
     password: config.PASSWORD,
     database: config.DATABASE,
     timezone: 'utc',
+    charset: 'utf8mb4',
     connectionLimit: 50
 });
 
@@ -41,9 +43,9 @@ async function getConnection() {
 //     });
 // }
 
-function closeConnection(connection){
-    connection.end(function(err){
-        if(err) throw err;
+function closeConnection(connection) {
+    connection.end(function (err) {
+        if (err) throw err;
         // console.log('Close connection');
     });
 }

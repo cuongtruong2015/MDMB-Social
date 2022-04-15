@@ -111,8 +111,8 @@ const SentStatus = styled(CheckCircle)`
   color: #4849a1;
 `;
 const ImageMessageWrapper = styled.div`
-    max-height: 200px;
-    cursor: pointer;
+  max-height: 200px;
+  cursor: pointer;
 
   img,
   video {
@@ -129,7 +129,7 @@ const IconPlay = styled(PlayCircle)`
   width: 4rem;
   margin-top: -200%;
   margin-left: 20%;
-  color:#fff;
+  color: #fff;
 `;
 const FileMessageWrapper = styled.div`
   display: flex;
@@ -145,10 +145,17 @@ const FileIcon = styled(File)`
   height: 2.5rem;
   padding: 0.5rem;
   border-radius: 50%;
-  background-color:  ${({owner})=>owner? "#e8e8ea;": "#6956c9;"}
+  background-color: ${({ owner }) => (owner ? '#e8e8ea;' : '#6956c9;')};
 `;
 const NameFile = styled.div`
   margin-left: 3px;
+`;
+const NicknameChanged = styled.div`
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  filter: opacity(0.5);
 `;
 function CardMessage(props) {
   const {
@@ -184,77 +191,85 @@ function CardMessage(props) {
   }
   return (
     <Wrapper owner={owner ? 1 : 0}>
-      <Avatar owner={owner ? 1 : 0}>
-        <img src={avatar} alt="" />
-      </Avatar>
-      <Row>
-        <Col lg={12}>
-          {!owner && <Name>{name}</Name>}
-          <WrapperContent owner={owner ? 1 : 0}>
-            <WrapperMessage owner={owner ? 1 : 0}>
-              <Message>
-                {type === 0 ? (
-                  isLink ? (
-                    <CardLink url={url} content={content} owner={owner} />
-                  ) : (
-                    content
-                  )
-                ) : type === 1 ? (
-                  <ImageMessageWrapper>
-                    <img src={content} alt="" />
-                  </ImageMessageWrapper>
-                ) : type === 2 ? (
-                  <ImageMessageWrapper>
-                    <video src={content} alt="" />
-                    <div>
-                    <IconPlay />
+      {type === 4 ? (
+        <NicknameChanged>{content}</NicknameChanged>
+      ) : (
+        <div>
+          <Avatar owner={owner ? 1 : 0}>
+            <img src={avatar} alt="" />
+          </Avatar>
+          <Row>
+            <Col lg={12}>
+              {!owner && <Name>{name}</Name>}
+              <WrapperContent owner={owner ? 1 : 0}>
+                <WrapperMessage owner={owner ? 1 : 0}>
+                  <Message>
+                    {type === 0 ? (
+                      isLink ? (
+                        <CardLink url={url} content={content} owner={owner} />
+                      ) : (
+                        content
+                      )
+                    ) : type === 1 ? (
+                      <ImageMessageWrapper>
+                        <img src={content} alt="" />
+                      </ImageMessageWrapper>
+                    ) : type === 2 ? (
+                      <ImageMessageWrapper>
+                        <video src={content} alt="" />
+                        <div>
+                          <IconPlay />
+                        </div>
+                      </ImageMessageWrapper>
+                    ) : (
+                      type === 3 && (
+                        <FileMessageWrapper
+                          onClick={() => (window.location.href = content)}
+                        >
+                          <FileIcon owner={owner} />
+                          <NameFile>
+                            {decodeURIComponent(
+                              ''.concat(
+                                content?.substring(
+                                  content?.indexOf('%2F') + 3,
+                                  content?.indexOf('?')
+                                )
+                              )
+                            )}
+                          </NameFile>
+                        </FileMessageWrapper>
+                      )
+                    )}
+                  </Message>
+                </WrapperMessage>
 
-                    </div>
-                  </ImageMessageWrapper>
-                ) : (
-                  <FileMessageWrapper
-                    onClick={() => (window.location.href = content)}
-                  >
-                    <FileIcon owner={owner} />
-                    <NameFile>
-                      {decodeURIComponent(
-                        ''.concat(
-                          content?.substring(
-                            content?.indexOf('%2F') + 3,
-                            content?.indexOf('?')
-                          )
-                        )
-                      )}
-                    </NameFile>
-                  </FileMessageWrapper>
+                {!owner && (
+                  <Time owner={owner ? 1 : 0}>{dayjs(sentDate).fromNow()}</Time>
                 )}
-              </Message>
-            </WrapperMessage>
+                {owner && (
+                  <Time owner={owner ? 1 : 0}>{dayjs(sentDate).fromNow()}</Time>
+                )}
+              </WrapperContent>
 
-            {!owner && (
-              <Time owner={owner ? 1 : 0}>{dayjs(sentDate).fromNow()}</Time>
-            )}
-            {owner && (
-              <Time owner={owner ? 1 : 0}>{dayjs(sentDate).fromNow()}</Time>
-            )}
-          </WrapperContent>
-          {seenLatest && !owner && (
-            <AvatarSeenLatest>
-              <img src={avatar} alt="" />
-            </AvatarSeenLatest>
-          )}
-          {seenLatest && owner && (
-            <AvatarSeen>
-              <img src={avatar} alt="" />
-            </AvatarSeen>
-          )}
-          {idLastMessage === messageId && !seenLatest && owner && (
-            <AvatarSeen>
-              <SentStatus />
-            </AvatarSeen>
-          )}
-        </Col>
-      </Row>
+              {seenLatest && !owner && (
+                <AvatarSeenLatest>
+                  <img src={avatar} alt="" />
+                </AvatarSeenLatest>
+              )}
+              {seenLatest && owner && (
+                <AvatarSeen>
+                  <img src={avatar} alt="" />
+                </AvatarSeen>
+              )}
+              {idLastMessage === messageId && !seenLatest && owner && (
+                <AvatarSeen>
+                  <SentStatus />
+                </AvatarSeen>
+              )}
+            </Col>
+          </Row>
+        </div>
+      )}
     </Wrapper>
   );
 }

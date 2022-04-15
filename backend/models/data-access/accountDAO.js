@@ -367,7 +367,7 @@ function getListHaveRelationship(AccountId) {
           if (err) return reject(err);
           let accounts = [];
           for (let i = 0; i < result.length; i++) {
-            let temp = result[i]; 
+            let temp = result[i];
             delete temp.Password;
             accounts.push(temp);
           }
@@ -395,24 +395,22 @@ function getListFriendRecommended(AccountId) {
 
 function updateAccountRelationship(RelatingAccountId, RelatedAccountId, Type, ButtonIcon, RelatingAccountNickname, RelatedAccountNickname, Notification) {
   let res;
-  // var con = connection.createConnection();
+
   return new Promise((resolve, reject) => {
-    // con.connect(async function (err) {
     connection.pool.getConnection(async function (err, con) {
       if (err) throw err;
-      // await connection.setTimeZone(con);
-      var arrayArgs=[];
+      var arrayArgs = [];
       _ = [Type, ButtonIcon, RelatingAccountNickname, RelatedAccountNickname, Notification];
       for (let i = 0; i < _.length; i++) {
-        if(_[i])arrayArgs.push(_[i]);
+        if (_[i] && _[i] !== 'RemoveThisValue$$$') arrayArgs.push(_[i]);
       }
       arrayArgs.push(RelatingAccountId);
       arrayArgs.push(RelatedAccountId);
       var sql = `Update MDMB.AccountRelationship
       set Type = ${Type ? "?" : 'Type'},
       ButtonIcon =  ${ButtonIcon ? "?" : 'ButtonIcon'},
-      RelatingAccountNickname = ${RelatingAccountNickname ? "?" : 'RelatingAccountNickname'},
-      RelatedAccountNickname = ${RelatedAccountNickname ? "?" : 'RelatedAccountNickname'},
+      RelatingAccountNickname = ${RelatingAccountNickname ? (RelatingAccountNickname === "RemoveThisValue$$$" ? null : "?") : 'RelatingAccountNickname'},
+      RelatedAccountNickname = ${RelatedAccountNickname ? (RelatedAccountNickname === "RemoveThisValue$$$" ? null : "?") : 'RelatedAccountNickname'},
       Notification = ${Notification ? "?" : 'Notification'}
       where RelatingAccountId=? and RelatedAccountId=?
       `;

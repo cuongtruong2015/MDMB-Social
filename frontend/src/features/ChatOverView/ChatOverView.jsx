@@ -38,6 +38,8 @@ import messageAudio from 'assets/audio/messengerSound.mp3';
 import { getListRelationship } from 'app/actions/listRelationship';
 import { getNotificationCount } from 'app/actions/notificationCount';
 import ChatInformation from './ChatInformation/ChatInformation';
+import { getUserProfile } from 'app/actions/userProfile';
+import { getUserProfileSelector } from 'app/selectors/userProfile';
 const Wrapper = styled(Container)`
   height: 100vh;
   overflow: hidden;
@@ -99,7 +101,6 @@ function ChatOverView() {
     }
     dispatch(getListConversation(auth?.accountId));
   }, [auth?.accessToken, socket, dispatch]);
-
   React.useEffect(() => {
     const listAccountId = listConversation.map((item) => item.AccountId);
     socket?.emit('get online', listAccountId, (data) => {
@@ -229,6 +230,7 @@ function ChatOverView() {
   React.useEffect(() => {
     dispatch(getListConversation(AccountId));
     dispatch(getListRelationship(AccountId));
+    dispatch(getUserProfile(AccountId));
   }, []);
   //end notification
   //sendfile
@@ -263,8 +265,10 @@ function ChatOverView() {
   React.useEffect(() => {
     setShowInforRight(false);
   }, [roomId]);
+  const userInfo = useSelector(getUserProfileSelector);
 
   //end Click ChatInfor
+
   return socket ? (
     <Wrapper fluid>
       <RowBS>
@@ -297,7 +301,7 @@ function ChatOverView() {
         </ColBS2>
         {showInforRight && (
           <ColBS3>
-            <ChatInformation partnerId={roomId} />
+            <ChatInformation partnerId={roomId} userInfo={userInfo} />
           </ColBS3>
         )}
       </RowBS>
