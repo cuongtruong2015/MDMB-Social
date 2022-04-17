@@ -34,7 +34,7 @@ const WarpTitle = styled.a`
 `;
 const WarpDescription = styled.div`
   font-weight: lighter;
-  height: 4rem;
+  max-height: 4rem;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -71,12 +71,13 @@ function CardLink({ url, content, owner }) {
   useEffect(() => {
     if (!checkUrlInState(url, urlInfor)) dispatch(getPreviewLink(url));
   }, []);
-  
+
   function handleClick() {
     window.open(url, '_blank');
   }
   var urlDisplay;
   if (checkUrlInState(url, urlInfor)) urlDisplay = getUrlDisplay(url, urlInfor);
+  var words = content.split(url);
   return (
     <WarpLink onClick={handleClick}>
       <WarpRawLink owner={owner}>{content}</WarpRawLink>

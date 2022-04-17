@@ -171,8 +171,7 @@ export function handleNotification(Swal, dispatch, user, userApi, notification, 
         }
     });
 }
-export async function changeIcon(icon, user, userApi, dispatch) {
-
+export async function changeIcon(icon, user, userApi, dispatch, socket) {
     if (icon === user.ButtonIcon) return;
     await userApi.updateAccountRelationship({
         RelatingAccountId: user.RelatingAccountId,
@@ -180,13 +179,45 @@ export async function changeIcon(icon, user, userApi, dispatch) {
         ButtonIcon: icon,
     }).then((rs) => {
         if (rs?.result) {
-            dispatch(getListRelationship(
-                +user?.RelatingAccountId === +user.AccountId
-                    ? user.RelatedAccountId
-                    : user.RelatingAccountId));
+            let message = "Chat icon has changed to " + icon;
+            socket?.emit('chat message', message, 4, user?.AccountId, (status, data) => {
+                if (status === 'ok' && +data.ToAccount === user?.AccountId) {
+                    dispatch(sendMessage(data));
+                    dispatch(updateListConversationWithSentMessage(data, 4));
+                    dispatch(getListRelationship(
+                        +user?.RelatingAccountId === +user.AccountId
+                            ? user.RelatedAccountId
+                            : user.RelatingAccountId));
+                }
+            });
             Toast.fire({
                 icon: 'success',
                 title: 'Changed icon successfully!',
+            })
+        }
+    });
+}
+export async function removeButtonIcon(icon, user, userApi, dispatch, socket) {
+    await userApi.updateAccountRelationship({
+        RelatingAccountId: user.RelatingAccountId,
+        RelatedAccountId: user.RelatedAccountId,
+        ButtonIcon: "RemoveThisValue$$$",
+    }).then((rs) => {
+        if (rs?.result) {
+            let message = "Chat icon has removed";
+            socket?.emit('chat message', message, 4, user?.AccountId, (status, data) => {
+                if (status === 'ok' && +data.ToAccount === user?.AccountId) {
+                    dispatch(sendMessage(data));
+                    dispatch(updateListConversationWithSentMessage(data, 4));
+                    dispatch(getListRelationship(
+                        +user?.RelatingAccountId === +user.AccountId
+                            ? user.RelatedAccountId
+                            : user.RelatingAccountId));
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: 'removed icon successfully!',
             })
         }
     });

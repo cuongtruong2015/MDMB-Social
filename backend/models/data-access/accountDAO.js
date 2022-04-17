@@ -408,7 +408,7 @@ function updateAccountRelationship(RelatingAccountId, RelatedAccountId, Type, Bu
       arrayArgs.push(RelatedAccountId);
       var sql = `Update MDMB.AccountRelationship
       set Type = ${Type ? "?" : 'Type'},
-      ButtonIcon =  ${ButtonIcon ? "?" : 'ButtonIcon'},
+      ButtonIcon =  ${ButtonIcon ? (ButtonIcon === "RemoveThisValue$$$" ? null : "?") : 'ButtonIcon'},
       RelatingAccountNickname = ${RelatingAccountNickname ? (RelatingAccountNickname === "RemoveThisValue$$$" ? null : "?") : 'RelatingAccountNickname'},
       RelatedAccountNickname = ${RelatedAccountNickname ? (RelatedAccountNickname === "RemoveThisValue$$$" ? null : "?") : 'RelatedAccountNickname'},
       Notification = ${Notification ? "?" : 'Notification'}

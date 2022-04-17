@@ -3,7 +3,6 @@ const messageToUserDAO = require('../models/data-access/messageToUserDAO');
 const cryptoMiddlware = require('../middlewares/crypto.middleware');
 
 function getOldMessage(req, res) {
-    // console.log("get old message");
 
     let accountId = req.query.accountId;
     let friendId = req.query.friendId;

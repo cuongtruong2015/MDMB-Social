@@ -3,7 +3,7 @@ export const getConversations = (state) =>
 
 export const getFilterName = (state) => state?.conversations?.filterBy;
 
-export const getConversationsBySearch= (state) =>
+export const getConversationsBySearch = (state) =>
   state?.conversations?.listFilterConversation;
 
 export const getConversationsByFilter = (state) => {

@@ -135,7 +135,12 @@ const NotificationOffIcon = styled(BellOff)`
   margin-right: 10%;
 `;
 
-function CardConversation({ onSelectRoom, conversation, nickname,notification }) {
+function CardConversation({
+  onSelectRoom,
+  conversation,
+  nickname,
+  notification,
+}) {
   const {
     Name: name,
     Avatar: avatar,
@@ -181,7 +186,7 @@ function CardConversation({ onSelectRoom, conversation, nickname,notification })
                 <NotificationOffIcon />
               ) : (
                 <StatusInner>
-                  {UnseenMessage > 0 ? (
+                  {UnseenMessage > 0 && lastMessage ? (
                     <WrapperNewMessage>
                       <LengthNewMessage>{UnseenMessage}</LengthNewMessage>
                     </WrapperNewMessage>

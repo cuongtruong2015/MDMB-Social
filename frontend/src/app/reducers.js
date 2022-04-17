@@ -14,21 +14,23 @@ import searchAccountReducer from 'features/Contact/LeftSide/SearchSilce'
 import listRelationshipReducer from 'features/UserInfor/listRelationshipSlice';
 import listFriendRecommendedReducer from 'features/Contact/RightSide/ListFriendRecommendSlice';
 import notificationReducer from 'features/ChatOverView/ChatConversations/notificationCountSlice';
+import odlerMessageReducer from 'features/ChatOverView/ChatWindow/WindowContent/Messages/olderMessageSlice';
 
 const appReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
   conversations: conversationsReducer,
   chat: chatReducer,
-  userProfile:userProfileReducer,
-  updateProfile:updateProfileReducer,
+  userProfile: userProfileReducer,
+  updateProfile: updateProfileReducer,
   socket: socketReducer,
-  previewLink:previewLinkReducer,
-  partnerProfile:partnerProfileReducer,
-  searchAccount:searchAccountReducer,
-  listRelationship:listRelationshipReducer,
-  listFriendRecommended:listFriendRecommendedReducer,
-  notificationCount:notificationReducer,
+  previewLink: previewLinkReducer,
+  partnerProfile: partnerProfileReducer,
+  searchAccount: searchAccountReducer,
+  listRelationship: listRelationshipReducer,
+  listFriendRecommended: listFriendRecommendedReducer,
+  notificationCount: notificationReducer,
+  olderMessage: odlerMessageReducer,
 });
 
 const rootReducer = (state, action) => {

@@ -19,6 +19,7 @@ import {
   changeIcon,
   ChangeNickname,
   handleNotification,
+  removeButtonIcon,
 } from 'utils/ChatInfor';
 import { getSocket } from 'app/selectors/socket';
 import { NimblePicker } from 'emoji-mart';
@@ -254,7 +255,11 @@ export default function ChatInformation({ partnerId, userInfo }) {
   const onEmojiClick = (data) => {
     setCurrentEmoji(data.native);
     setShowEmojiDialog(false);
-    changeIcon(data.native, user, userApi, dispatch);
+    changeIcon(data.native, user, userApi, dispatch, socket);
+  };
+  const handleRemoveButtonIcon = () => {
+    removeButtonIcon(data.native, user, userApi, dispatch, socket);
+    setShowEmojiDialog(false);
   };
   return (
     <Wrapper>
@@ -266,14 +271,16 @@ export default function ChatInformation({ partnerId, userInfo }) {
       >
         <BodyModal>
           <HeaderEmojiDialog>Pick Your Button Emoji</HeaderEmojiDialog>
-          <CurrentEmojiWrapper>
-            <Text>Current Icon:</Text>
-            {currentEmoji && <EmojiHolder>{currentEmoji}</EmojiHolder>}
-            <ButtonRemoveEmoji>
-              <RemoveEmojiIcon />
-              Remove
-            </ButtonRemoveEmoji>
-          </CurrentEmojiWrapper>
+          {currentEmoji && (
+            <CurrentEmojiWrapper>
+              <Text>Current Icon:</Text>
+              <EmojiHolder>{currentEmoji}</EmojiHolder>
+              <ButtonRemoveEmoji onClick={handleRemoveButtonIcon}>
+                <RemoveEmojiIcon />
+                Remove
+              </ButtonRemoveEmoji>
+            </CurrentEmojiWrapper>
+          )}
           <NimblePicker
             style={{
               border: '0px',

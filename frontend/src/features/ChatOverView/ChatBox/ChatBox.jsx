@@ -272,7 +272,6 @@ function ChatBox({
       if (fileTemp) onSendFiles(fileTemp);
     }, 1000);
     setShowPicker(false);
-    console.log();
   };
   const onPreviewEmoji = () => {
     setShowPicker((prev) => !prev);
@@ -320,7 +319,9 @@ function ChatBox({
     (item) =>
       item.RelatedAccountId == roomId || item.RelatingAccountId == roomId
   )[0];
-  const buttonIcon = user?.ButtonIcon;
+  var buttonIcon;
+  if (files.length > 0) buttonIcon = false;
+  else buttonIcon = user?.ButtonIcon;
   const handleOnIconSendButton = () => {
     onSendMessage(user?.ButtonIcon, 0);
   };

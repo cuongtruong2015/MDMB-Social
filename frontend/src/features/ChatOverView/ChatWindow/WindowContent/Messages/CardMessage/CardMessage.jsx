@@ -21,6 +21,9 @@ const Wrapper = styled.div`
   margin-bottom: 25px;
   justify-content: ${({ owner }) => (owner === 1 ? 'flex-end' : 'flex-start')};
 `;
+const WrapperCard = styled.div`
+  display: flex;
+`;
 const WrapperContent = styled.div`
   transition: 0s;
   border-radius: ${({ owner }) =>
@@ -186,15 +189,15 @@ function CardMessage(props) {
   ); // fragment locator
   let isLink = regexContainLink.test(content);
   if (isLink) {
-    var url = content.match(regexContainLink)[0];
-    isLink = !!pattern.test(url);
+    var url = content.match(regexContainLink)?.[0];
+    isLink = pattern.test(url);
   }
   return (
     <Wrapper owner={owner ? 1 : 0}>
       {type === 4 ? (
         <NicknameChanged>{content}</NicknameChanged>
       ) : (
-        <div>
+        <WrapperCard>
           <Avatar owner={owner ? 1 : 0}>
             <img src={avatar} alt="" />
           </Avatar>
@@ -268,7 +271,7 @@ function CardMessage(props) {
               )}
             </Col>
           </Row>
-        </div>
+        </WrapperCard>
       )}
     </Wrapper>
   );

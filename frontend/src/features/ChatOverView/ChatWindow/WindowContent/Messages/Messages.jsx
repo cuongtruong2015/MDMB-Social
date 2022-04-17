@@ -6,9 +6,11 @@ import {
 import { getAuth } from 'app/selectors/login';
 import CardMessage from 'features/ChatOverView/ChatWindow/WindowContent/Messages/CardMessage/CardMessage';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import { useParams } from 'react-router-dom';
+import { olderMessageSelector } from 'app/selectors/olderMessage';
+import { getOlderMessage } from 'app/actions/olderMessage';
 
 const dotTyping = keyframes`
   0% {
@@ -72,16 +74,16 @@ const WrapperScroll = styled.div`
   position: relative;
 `;
 
-function Messages({ typing, onSeenMessage }) {
-  const messagesLatest = useSelector(getListMessageLatest);
+function Messages({ typing, onSeenMessage, onGetMoreMessage, listMessages }) {
+  const messagesLatest = listMessages;
   const myAccountId = useSelector(getAuth)?.accountId;
   const messageSeenDateLatest = useSelector(getMessageSeenLatest);
   const messagesEndRef = React.useRef(null);
   const partner = useSelector(getPartner);
-
+  const dispatch = useDispatch();
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
-      // behavior: 'smooth',
+      behavior: 'smooth',
       block: 'end',
       inline: 'nearest',
     });
@@ -90,6 +92,9 @@ function Messages({ typing, onSeenMessage }) {
 
   const maxMessage = messagesLatest.reduce(function (prev, current) {
     return prev.MessageId > current.MessageId ? prev : current;
+  });
+  const minMessage = messagesLatest.reduce(function (prev, current) {
+    return prev.MessageId < current.MessageId ? prev : current;
   });
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -101,9 +106,23 @@ function Messages({ typing, onSeenMessage }) {
       clearTimeout(timer);
     };
   }, [roomId]);
+  const olderMessage = useSelector(olderMessageSelector);
+  var partnerOlderMessage = olderMessage.filter(
+    (item) =>
+      (item.FromAccount == myAccountId && item.ToAccount == roomId) ||
+      (item.FromAccount == roomId && item.ToAccount == myAccountId)
+  );
+  partnerOlderMessage.sort((a, b) => (a.MessageId < b.MessageId ? -1 : 1));
+  React.useEffect(() => {
+    const lastMessageId = partnerOlderMessage[0]
+      ? partnerOlderMessage[0].MessageId
+      : minMessage?.MessageId;
+    if (onGetMoreMessage)
+      dispatch(getOlderMessage(myAccountId, roomId, lastMessageId));
+  }, [onGetMoreMessage]);
   return (
     <>
-      {messagesLatest.map((item) => (
+      {[...partnerOlderMessage, ...messagesLatest].map((item) => (
         <WrapperScroll key={item.MessageId}>
           <CardMessage
             messageId={item.MessageId}

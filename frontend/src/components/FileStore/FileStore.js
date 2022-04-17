@@ -1,12 +1,9 @@
-import Swal from 'sweetalert2';
 import { initializeApp } from "firebase/app";
 import 'firebase/compat/auth';
-import { getStorage } from "firebase/storage";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { useState } from "react";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import Swal from 'sweetalert2';
 
 export function checkFileSize(files, size, length) {
-
   return new Promise((resolve, reject) => {
     if (length && files.length > length) {
       Swal.fire({

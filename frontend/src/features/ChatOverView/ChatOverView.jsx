@@ -40,6 +40,8 @@ import { getNotificationCount } from 'app/actions/notificationCount';
 import ChatInformation from './ChatInformation/ChatInformation';
 import { getUserProfile } from 'app/actions/userProfile';
 import { getUserProfileSelector } from 'app/selectors/userProfile';
+import { removeOlderMessage } from 'app/actions/olderMessage';
+import { getFetchingMessage } from 'app/selectors/chat';
 const Wrapper = styled(Container)`
   height: 100vh;
   overflow: hidden;
@@ -196,6 +198,7 @@ function ChatOverView() {
     if (+conversation.AccountId !== +roomId) {
       dispatch(selectRoom(conversation, navigate));
       dispatch(getMessagesLatest(auth?.accountId, conversation.AccountId));
+      dispatch(removeOlderMessage());
     }
   };
 
@@ -268,7 +271,6 @@ function ChatOverView() {
   const userInfo = useSelector(getUserProfileSelector);
 
   //end Click ChatInfor
-
   return socket ? (
     <Wrapper fluid>
       <RowBS>
