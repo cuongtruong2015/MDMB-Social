@@ -49,6 +49,7 @@ const Wrapper = styled.div`
   margin-right: 20px;
   transition: 3s all;
   height: 100vh;
+  z-index: 2;
 `;
 const Avatar = styled.div`
   img {
@@ -250,7 +251,12 @@ const BackArowIcon = styled(ArrowBack)`
   }
 `;
 
-export default function ChatInformation({ partnerId, userInfo }) {
+export default function ChatInformation({
+  partnerId,
+  userInfo,
+  showMediaOverlay,
+  showOverlay,
+}) {
   const socket = useSelector(getSocket);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -307,7 +313,7 @@ export default function ChatInformation({ partnerId, userInfo }) {
   const handleEmojiCustomClick = () => {
     setShowEmojiDialog(true);
   };
-  const [currentEmoji, setCurrentEmoji] = React.useState(user.ButtonIcon);
+  const [currentEmoji, setCurrentEmoji] = React.useState(user?.ButtonIcon);
   const onEmojiClick = (data) => {
     setCurrentEmoji(data.native);
     setShowEmojiDialog(false);
@@ -349,7 +355,14 @@ export default function ChatInformation({ partnerId, userInfo }) {
     if (showFiles) dispatch(getFiles(userInfo.AccountId, partnerId));
     if (showLink) dispatch(getLinks(userInfo.AccountId, partnerId));
   }, [showLink, showFiles, showMedia]);
+  useEffect(() => {
+    if (showOverlay) setShowMedia(true);
+  }, [showOverlay]);
   // Media, Files, Link end
+  const onMediaClick = (item) => {
+    setShowMedia(true);
+    showMediaOverlay(item);
+  };
   return (
     <>
       {showMedia || showFiles || showLink ? (
@@ -371,9 +384,15 @@ export default function ChatInformation({ partnerId, userInfo }) {
               Link
             </AFeature>
           </SwapFeature>
-          {showMedia && <MediaList listMedia={listMedia} />}
-          {showFiles && <Files listFiles={listFiles} />}
-          {showLink && <Links listLink={listLink} />}
+          {showMedia && (
+            <MediaList
+              listMedia={listMedia}
+              onMediaClick={onMediaClick}
+              user={user}
+            />
+          )}
+          {showFiles && <Files listFiles={listFiles} user={user} />}
+          {showLink && <Links listLink={listLink} user={user} />}
         </Wrapper>
       ) : (
         <Wrapper>

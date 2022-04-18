@@ -1,4 +1,4 @@
-import { mediaTypes, FileTypes, LinkTypes } from 'app/actions/types/mediaAndFileTypes';
+import { mediaTypes, FileTypes, LinkTypes, MoreMediaTypes } from 'app/actions/types/mediaAndFileTypes';
 
 const initialState = {
     isFetching: false,
@@ -8,6 +8,7 @@ const initialState = {
     listMedia: [],
     listFiles: [],
     listLink: [],
+    moreMedia: [],
 };
 const listMediaReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -81,6 +82,44 @@ const listMediaReducer = (state = initialState, action) => {
                 listLink: action.payload,
             };
         case LinkTypes.GET_LINKS_FAILURE:
+            return {
+                ...state,
+                isFetching: false,
+                error: true,
+                success: false,
+                message: action.payload.message,
+            };
+        //----------------get more media------------------------------//
+        case MoreMediaTypes.GET_MORE_MEDIA_START:
+            return {
+                ...state,
+                isFetching: true,
+                error: false,
+                success: false,
+                message: null,
+            };
+        case MoreMediaTypes.GET_MORE_MEDIA_SUCCESS:
+            var obj = state.moreMedia;
+            var check = false;
+            for (let i = 0; i < action.payload.length; i++) {
+                for (let j = 0; j < obj.length; j++) {
+                    if (obj[j].MessageId === action.payload[i].MessageId) {
+                        check = true;
+                    }
+                }
+            }
+            if (!check) obj = [...obj, ...action.payload]
+            if (check) var msg = "no update"
+            else var msg = null;
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: true,
+                message: msg,
+                moreMedia: obj,
+            };
+        case MoreMediaTypes.GET_MORE_MEDIA_FAILURE:
             return {
                 ...state,
                 isFetching: false,

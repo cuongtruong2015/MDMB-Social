@@ -23,7 +23,8 @@ const WrapperMessageContent = styled.div`
   flex-direction: column-reverse;
   align-items: flex-start;
   width: 100%;
-  height: ${({hasFileInput}) =>hasFileInput?"calc(100vh - 220px)":"calc(100vh - 170px)"};
+  height: ${({ hasFileInput }) =>
+    hasFileInput ? 'calc(100vh - 220px)' : 'calc(100vh - 170px)'};
 `;
 const RowBS = styled(Row)`
   height: inherit;
@@ -32,19 +33,34 @@ const RowBS = styled(Row)`
 
 const ColBS = styled(Col)``;
 
-function ChatWindow({ onSendMessage, onTyping, typing, onSeenMessage,onSendFiles,onClickChatInfor }) {
+function ChatWindow({
+  onSendMessage,
+  onTyping,
+  typing,
+  onSeenMessage,
+  onSendFiles,
+  onClickChatInfor,
+  showMediaOverlay,
+}) {
   const { roomId } = useParams();
   const [hasFileInput, setHasFileInput] = React.useState(false);
   const listFile = (files) => {
     if (files[0]) setHasFileInput(true);
-  else setHasFileInput(false);
+    else setHasFileInput(false);
   };
   return (
     <Wrapper>
-      <ChatHeader WindowEmpty={roomId ? false : true} onClickChatInfor={onClickChatInfor}/>
+      <ChatHeader
+        WindowEmpty={roomId ? false : true}
+        onClickChatInfor={onClickChatInfor}
+      />
       <RowMessageInner>
         <WrapperMessageContent hasFileInput={hasFileInput}>
-          <WindowContent typing={typing} onSeenMessage={onSeenMessage} />
+          <WindowContent
+            typing={typing}
+            onSeenMessage={onSeenMessage}
+            showMediaOverlay={showMediaOverlay}
+          />
         </WrapperMessageContent>
       </RowMessageInner>
       <RowBS>

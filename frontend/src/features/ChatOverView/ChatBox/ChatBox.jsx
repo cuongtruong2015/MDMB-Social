@@ -39,6 +39,7 @@ const FileInput = styled.div`
     width: 60px;
     height: 60px;
     border-radius: 10px;
+    object-fit: cover;
   }
   margin-left: 10px;
   display: flex;
@@ -336,10 +337,10 @@ function ChatBox({
             {files.map((file, index) => (
               <FileInput key={index}>
                 {file.type.includes('image') ? (
-                  <img src={URL.createObjectURL(file)} alt="avatar" />
+                  <img src={URL.createObjectURL(file)} alt="image" />
                 ) : file.type.includes('video') ? (
                   <VideoWrapper>
-                    <video src={URL.createObjectURL(file)} alt="avatar" />
+                    <video src={URL.createObjectURL(file)} alt="video" />
                     <IconPlayVideo />
                   </VideoWrapper>
                 ) : (

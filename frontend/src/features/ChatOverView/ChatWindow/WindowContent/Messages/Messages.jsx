@@ -74,7 +74,13 @@ const WrapperScroll = styled.div`
   position: relative;
 `;
 
-function Messages({ typing, onSeenMessage, onGetMoreMessage, listMessages }) {
+function Messages({
+  typing,
+  onSeenMessage,
+  onGetMoreMessage,
+  listMessages,
+  showMediaOverlay,
+}) {
   const messagesLatest = listMessages;
   const myAccountId = useSelector(getAuth)?.accountId;
   const messageSeenDateLatest = useSelector(getMessageSeenLatest);
@@ -137,6 +143,8 @@ function Messages({ typing, onSeenMessage, onGetMoreMessage, listMessages }) {
             // onSeenMessage={onSeenMessage}
             seenLatest={messageSeenDateLatest?.MessageId === item.MessageId}
             idLastMessage={messagesLatest[messagesLatest.length - 1].MessageId}
+            showMediaOverlay={showMediaOverlay}
+            item={item}
           />
         </WrapperScroll>
       ))}

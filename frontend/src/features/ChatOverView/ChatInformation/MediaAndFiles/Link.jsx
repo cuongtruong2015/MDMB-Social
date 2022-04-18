@@ -1,7 +1,9 @@
 import { Link } from '@styled-icons/boxicons-regular';
+import { mediaAndFilesFetchingSelector } from 'app/selectors/mediaAndFiles';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { useNavigate } from '../../../../../node_modules/react-router-dom/index';
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
@@ -19,7 +21,7 @@ const FileList = styled.div`
 `;
 const Fileitem = styled.div`
   margin-top: 10px;
-  height: 50px;
+  height: 40px;
   display: flex;
   align-items: center;
   font-size: 1.2rem;
@@ -36,20 +38,43 @@ const FileName = styled.span`
   overflow-x: hidden;
   width: 300px;
 `;
-function checkUrlInState(url, urlInfor) {
-  var temp = false;
-  urlInfor?.forEach((element) => {
-    if (element.url.includes(url)) temp = true;
-  });
-  return temp;
-}
-function getUrlDisplay(url, urlInfor) {
-  var temp;
-  urlInfor.forEach((element) => {
-    if (element.url.includes(url)) temp = element;
-  });
-  return temp;
-}
+const LoadingWrapper = styled.div`
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  margin-top: 50px;
+`;
+const Loading = styled.div`
+  border: 5px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 5px solid #3498db;
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  @-webkit-keyframes spin {
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+const NoLink = styled.div`
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+`;
 export default function Links({ listLink }) {
   const regexContainLink =
     /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
@@ -58,20 +83,32 @@ export default function Links({ listLink }) {
     item.Content = item.Content.match(regexContainLink)?.[0];
     newListLink.push(item);
   });
+  const handleLinkClick = (url) => {
+    if (!url.match('^https?://') || !url.match('^http?://'))
+      url = 'https://' + url;
+    window.open(url, '_blank').focus();
+  };
 
+  const isFetching = useSelector(mediaAndFilesFetchingSelector);
   return (
     <Wrapper>
+      {!isFetching && newListLink?.length === 0 && (
+        <NoLink>No Link to display</NoLink>
+      )}
       <FileList>
-        {newListLink?.map((item, index) => (
-          <Fileitem
-            key={index}
-            onClick={() => (window.location.href = item.Content)}
-          >
-            <LinkIcon />
-            <FileName>{item.Content}</FileName>
-          </Fileitem>
-        ))}
+        {!isFetching &&
+          newListLink?.map((item, index) => (
+            <Fileitem key={index} onClick={() => handleLinkClick(item.Content)}>
+              <LinkIcon />
+              <FileName>{item.Content}</FileName>
+            </Fileitem>
+          ))}
       </FileList>
+      {isFetching && (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      )}
     </Wrapper>
   );
 }

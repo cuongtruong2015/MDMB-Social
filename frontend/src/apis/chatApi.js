@@ -21,6 +21,10 @@ const chatApi = {
   getLinks: (myAccountId, yourAccountId) => {
     const url = `/chat/links?accountId=${myAccountId}&friendId=${yourAccountId}`;
     return axiosClient.get(url);
+  },
+  getMoreListImageAndVideo: (myAccountId, yourAccountId, messageId) => {
+    const url = `/chat/more-image-and-video?accountId=${myAccountId}&friendId=${yourAccountId}&messageId=${messageId}`;
+    return axiosClient.get(url);
   }
 };
 export default chatApi;

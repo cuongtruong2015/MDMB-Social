@@ -1,5 +1,5 @@
 import chatApi from 'apis/chatApi';
-import { mediaTypes, FileTypes, LinkTypes } from 'app/actions/types/mediaAndFileTypes';
+import { mediaTypes, FileTypes, LinkTypes, MoreMediaTypes } from 'app/actions/types/mediaAndFileTypes';
 
 const getMediaStart = () => {
     return {
@@ -77,4 +77,31 @@ export const getLinks = (myAccountId, friendAccountId) => async (dispatch) => {
     dispatch(getLinksStart());
     const data = await chatApi.getLinks(myAccountId, friendAccountId);
     dispatch(getLinksSuccess(data));
+};
+
+//------------MoreMedia------------------------------//
+const getMoreMediaStart = () => {
+    return {
+        type: MoreMediaTypes.GET_MORE_MEDIA_START,
+    };
+};
+
+const getMoreMediaSuccess = (data) => {
+    return {
+        type: MoreMediaTypes.GET_MORE_MEDIA_SUCCESS,
+        payload: data
+    };
+};
+
+const getMoreMediaFailure = (message) => {
+    return {
+        type: MoreMediaTypes.GET_MORE_MEDIA_FAILURE,
+        payload: message,
+    };
+};
+
+export const getMoreMedia = (myAccountId, friendAccountId, messageId) => async (dispatch) => {
+    dispatch(getMoreMediaStart());
+    const data = await chatApi.getMoreListImageAndVideo(myAccountId, friendAccountId, messageId);
+    dispatch(getMoreMediaSuccess(data));
 };

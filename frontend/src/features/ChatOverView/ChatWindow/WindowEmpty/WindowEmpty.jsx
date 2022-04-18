@@ -6,7 +6,7 @@ import { getUserProfile } from 'app/actions/userProfile';
 import { getAuth } from 'app/selectors/login';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserProfileSelector } from 'app/selectors/userProfile';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled(Col)`
   display: flex;
@@ -34,7 +34,6 @@ const Avatar = styled.div`
     border-radius: 50%;
     border: 1px solid #c90d7b;
     object-fit: cover;
-
   }
 `;
 const Name = styled.div`
@@ -116,36 +115,45 @@ function WindowEmpty() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector(getAuth);
-  React.useEffect(()=>{
+  React.useEffect(() => {
     dispatch(getUserProfile(auth.accountId));
-  },[])
+  }, []);
   const userInfo = useSelector(getUserProfileSelector);
-  const handleEditProfileClick = () =>{
-    navigate('/update-profile')
-  }
+  const handleEditProfileClick = () => {
+    navigate('/update-profile');
+  };
+  const handleAddfriendClick = () => {
+    navigate('/contact');
+  };
   return (
     <Wrapper>
       <WrapperTop>
         <Avatar>
-          <img src={userInfo.Avatar||"https://res.cloudinary.com/dqkdfl2lp/image/upload/v1647584539/vdulyix9dgutgdphrstu.jpg"} alt="avatar" />
+          <img
+            src={
+              userInfo.Avatar ||
+              'https://res.cloudinary.com/dqkdfl2lp/image/upload/v1647584539/vdulyix9dgutgdphrstu.jpg'
+            }
+            alt="avatar"
+          />
         </Avatar>
         <Tittle>
           <Greeting>Welcome!</Greeting>
-          <Name>{userInfo.Name||"Loading"}</Name>
+          <Name>{userInfo.Name || 'Loading'}</Name>
         </Tittle>
         <EditProfile onClick={handleEditProfileClick}>Edit Profile</EditProfile>
       </WrapperTop>
       <WrapperBottom>
         <Card>
           <Intro> Easily to connect with people</Intro>
-          <Button>Add Friend!</Button>
+          <Button onClick={handleAddfriendClick}>Add Friend!</Button>
         </Card>
         <Card>
           <Intro> Calling right now</Intro>
           <Button>Make a call!</Button>
         </Card>
       </WrapperBottom>
-      <Footer> You are signin as {userInfo.Email||"Loading"} </Footer>
+      <Footer> You are signin as {userInfo.Email || 'Loading'} </Footer>
       <Footer2>
         Try switching accounts if you not see your contact history,{' '}
         <Link href="https://mail.google.com/">learn more</Link> on{' '}

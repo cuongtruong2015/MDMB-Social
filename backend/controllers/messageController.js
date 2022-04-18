@@ -150,6 +150,26 @@ function getLinks(req, res) {
         }
     });
 }
+function getMoreImageAndVideo(req, res) {
+
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+    let messageId = req.query.messageId;
+    messageToUserDAO.getMoreImageAndVideo(accountId, friendId, messageId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                } catch (error) {
+                    // console.log(error);
+                }
+            });
+            res.status(200).json(listMessage);
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
 module.exports = {
     getOldMessage,
     getOlderMessage,
@@ -157,5 +177,6 @@ module.exports = {
     getImageAndVideo,
     getFiles,
     getLinks,
+    getMoreImageAndVideo,
     // getChatList
 };

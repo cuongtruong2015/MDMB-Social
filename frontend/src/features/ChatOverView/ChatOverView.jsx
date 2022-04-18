@@ -42,6 +42,7 @@ import { getUserProfile } from 'app/actions/userProfile';
 import { getUserProfileSelector } from 'app/selectors/userProfile';
 import { removeOlderMessage } from 'app/actions/olderMessage';
 import { getFetchingMessage } from 'app/selectors/chat';
+import MediaOverlay from 'features/ChatOverView/MediaOverlay/MediaOverlay';
 const Wrapper = styled(Container)`
   height: 100vh;
   overflow: hidden;
@@ -86,6 +87,8 @@ const ColBS3 = styled(Col)`
   ${({ showInforRight }) =>
     showInforRight ? 'display:unset' : 'display:none'}; */
   transition: all 0.3s;
+  z-index: 2;
+  background-color: #fff;
 `;
 function ChatOverView() {
   const auth = useSelector(getAuth);
@@ -271,39 +274,66 @@ function ChatOverView() {
   const userInfo = useSelector(getUserProfileSelector);
 
   //end Click ChatInfor
+  //mediaOverlay
+  const [showOverlay, setShowOverlay] = React.useState(false);
+  const [mediaCenter, setMediaCenter] = React.useState([]);
+  const showMediaOverlay = (item) => {
+    setShowOverlay(true);
+    setShowInforRight(true);
+    setMediaCenter(item);
+  };
+  const disableMediaOverlay = () => {
+    setShowOverlay(false);
+  };
+  //end MediaOverlay
   return socket ? (
     <Wrapper fluid>
       <RowBS>
-        <LeftBar lg={1} xs={1} md={1}>
-          <Sidebar MessageActive={true} />
-        </LeftBar>
-        <ColBS1 lg={3} xs={3} md={3} active={roomId ? 1 : 0}>
-          <ChatConversations onSelectRoom={handleSelectRoomClick} />
-        </ColBS1>
-        <ColBS2
-          lg={8}
-          xs={8}
-          md={8}
-          active={roomId ? 1 : 0}
-          showinforright={showInforRight ? 1 : 0}
-        >
-          {roomId ? (
-            <ChatWindow
-              onSendMessage={handleSendMessage}
-              onTyping={handleTyping}
-              myAccountId={auth?.accountId}
-              typing={typing}
-              onSeenMessage={handleSeenMessage}
-              onSendFiles={handleSendFiles}
-              onClickChatInfor={handleClickChatInfor}
-            />
-          ) : (
-            <WindowEmpty />
-          )}
-        </ColBS2>
+        {showOverlay ? (
+          <MediaOverlay
+            disableMediaOverlay={disableMediaOverlay}
+            media={mediaCenter}
+          />
+        ) : (
+          <>
+            <LeftBar lg={1} xs={1} md={1}>
+              <Sidebar MessageActive={true} />
+            </LeftBar>
+            <ColBS1 lg={3} xs={3} md={3} active={roomId ? 1 : 0}>
+              <ChatConversations onSelectRoom={handleSelectRoomClick} />
+            </ColBS1>
+            <ColBS2
+              lg={8}
+              xs={8}
+              md={8}
+              active={roomId ? 1 : 0}
+              showinforright={showInforRight ? 1 : 0}
+            >
+              {roomId ? (
+                <ChatWindow
+                  onSendMessage={handleSendMessage}
+                  onTyping={handleTyping}
+                  myAccountId={auth?.accountId}
+                  typing={typing}
+                  onSeenMessage={handleSeenMessage}
+                  onSendFiles={handleSendFiles}
+                  onClickChatInfor={handleClickChatInfor}
+                  showMediaOverlay={showMediaOverlay}
+                />
+              ) : (
+                <WindowEmpty />
+              )}
+            </ColBS2>
+          </>
+        )}
         {showInforRight && (
           <ColBS3>
-            <ChatInformation partnerId={roomId} userInfo={userInfo} />
+            <ChatInformation
+              partnerId={roomId}
+              userInfo={userInfo}
+              showMediaOverlay={showMediaOverlay}
+              showOverlay={showOverlay}
+            />
           </ColBS3>
         )}
       </RowBS>

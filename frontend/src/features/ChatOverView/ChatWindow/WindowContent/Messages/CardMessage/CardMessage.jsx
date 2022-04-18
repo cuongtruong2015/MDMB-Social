@@ -1,19 +1,13 @@
-import { CheckCircle } from '@styled-icons/heroicons-solid';
 import { PlayCircle } from '@styled-icons/boxicons-regular';
+import { File } from '@styled-icons/boxicons-solid';
+import { CheckCircle } from '@styled-icons/heroicons-solid';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import CardLink from 'features/ChatOverView/ChatWindow/WindowContent/Messages/CardMessage/CardLink';
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import isValidURL from 'utils/validUrl';
-import { File } from '@styled-icons/boxicons-solid';
-import {
-  Navigate,
-  useNavigate,
-} from '../../../../../../../node_modules/react-router-dom/index';
-import LazyLoad from 'react-lazy-load';
+import { useNavigate } from '../../../../../../../node_modules/react-router-dom/index';
 dayjs.extend(relativeTime);
 
 const Wrapper = styled.div`
@@ -114,6 +108,7 @@ const SentStatus = styled(CheckCircle)`
   color: #4849a1;
 `;
 const ImageMessageWrapper = styled.div`
+  display: flex;
   cursor: pointer;
   img,
   video {
@@ -123,12 +118,18 @@ const ImageMessageWrapper = styled.div`
     border-radius: 4%;
   }
 `;
-const ButtonVideo = styled.div``;
+const ButtonVideo = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 const IconPlay = styled(PlayCircle)`
   width: 1.5rem;
   height: 1.5rem;
   color: #fff;
-  position: absolute;
 `;
 const FileMessageWrapper = styled.div`
   display: flex;
@@ -170,6 +171,8 @@ function CardMessage(props) {
     messageId,
     seenLatest,
     idLastMessage,
+    showMediaOverlay,
+    item,
   } = props;
   const navigate = useNavigate();
   const regexContainLink =
@@ -202,6 +205,11 @@ function CardMessage(props) {
               {!owner && <Name>{name}</Name>}
               <WrapperContent owner={owner ? 1 : 0}>
                 <WrapperMessage owner={owner ? 1 : 0}>
+                  {type === 2 && (
+                    <ButtonVideo>
+                      <IconPlay />
+                    </ButtonVideo>
+                  )}
                   <Message>
                     {type === 0 ? (
                       isLink ? (
@@ -210,14 +218,15 @@ function CardMessage(props) {
                         content
                       )
                     ) : type === 1 ? (
-                      <ImageMessageWrapper>
+                      <ImageMessageWrapper
+                        onClick={() => showMediaOverlay(item)}
+                      >
                         <img src={content} alt="" />
                       </ImageMessageWrapper>
                     ) : type === 2 ? (
-                      <ImageMessageWrapper>
-                        <ButtonVideo>
-                          <IconPlay />
-                        </ButtonVideo>
+                      <ImageMessageWrapper
+                        onClick={() => showMediaOverlay(item)}
+                      >
                         <video className="video" src={content} alt=""></video>
                       </ImageMessageWrapper>
                     ) : (

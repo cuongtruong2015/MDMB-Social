@@ -15,3 +15,9 @@ export const LinkTypes = {
     GET_LINKS_SUCCESS: 'get/links/success',
     GET_LINKS_FAILURE: 'get/links/failure',
 };
+export const MoreMediaTypes = {
+    GET_MORE_MEDIA_START: 'get/moremedia/start',
+    GET_MORE_MEDIA_SUCCESS: 'get/moremedia/success',
+    GET_MORE_MEDIA_FAILURE: 'get/moremedia/failure',
+};
+

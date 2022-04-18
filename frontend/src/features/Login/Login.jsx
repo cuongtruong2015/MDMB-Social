@@ -362,9 +362,9 @@ function Login() {
                   <img className="w-100" src={Hero1} alt="icon" />
                 </div>
                 <Carousel.Caption>
-                  <h3 className="slider__heading">First slide label</h3>
+                  <h3 className="slider__heading">Simple way to text, call</h3>
                   <p className="slider__desc">
-                    Nulla vitae elit libero, a pharetra augue mollis interdum.
+                    Easy to call and text with your friend!
                   </p>
                 </Carousel.Caption>
               </Carousel.Item>
@@ -373,9 +373,9 @@ function Login() {
                   <img className="w-100" src={Hero2} alt="icon" />
                 </div>
                 <Carousel.Caption>
-                  <h3 className="slider__heading">Second slide label</h3>
+                  <h3 className="slider__heading">Secure message</h3>
                   <p className="slider__desc">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    All message be encryted and secure.
                   </p>
                 </Carousel.Caption>
               </Carousel.Item>
@@ -385,10 +385,9 @@ function Login() {
                 </div>
 
                 <Carousel.Caption>
-                  <h3 className="slider__heading">Third slide label</h3>
+                  <h3 className="slider__heading">Convenient</h3>
                   <p className="slider__desc">
-                    Praesent commodo cursus magna, vel scelerisque nisl
-                    consectetur.
+                    Easy to access flatform and easy to use.
                   </p>
                 </Carousel.Caption>
               </Carousel.Item>

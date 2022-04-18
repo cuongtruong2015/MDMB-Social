@@ -17,7 +17,7 @@ const MessageLoadingWrapper = styled.div`
   margin-bottom: 180px;
   padding: 30px;
 `;
-function WindowContent({ typing, onSeenMessage }) {
+function WindowContent({ typing, onSeenMessage, showMediaOverlay }) {
   const dispatch = useDispatch();
   const messagesLatest = useSelector(getListMessageLatest);
   const isFetching = useSelector(getFetchingMessage);
@@ -39,6 +39,7 @@ function WindowContent({ typing, onSeenMessage }) {
           onSeenMessage={onSeenMessage}
           onGetMoreMessage={getMoreMessage}
           listMessages={messagesLatest}
+          showMediaOverlay={showMediaOverlay}
         />
       ) : (
         <MessageEmpty />

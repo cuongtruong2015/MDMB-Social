@@ -66,7 +66,8 @@ function CardLink({ url, content, owner }) {
   const dispatch = useDispatch();
   const urlInfor = useSelector(getPreviewLinkSelector);
 
-  if (!url.match('^https?://')) url = 'http://' + url;
+  if (!url.match('^https?://') || !url.match('^http?://'))
+    url = 'https://' + url;
 
   useEffect(() => {
     if (!checkUrlInState(url, urlInfor)) dispatch(getPreviewLink(url));

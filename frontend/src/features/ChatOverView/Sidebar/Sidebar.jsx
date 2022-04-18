@@ -1,25 +1,21 @@
-import React, { useRef } from 'react';
-import styled, { css } from 'styled-components';
-import LogoImg from 'assets/images/logos/logo.jpg';
-import { ReactComponent as Message } from 'assets/images/icons/chat-fill.svg';
-import { Contact as PhoneBook } from '@styled-icons/boxicons-solid';
 import {
   Cog as Setting,
+  Contact as PhoneBook,
   LogOut,
   UserCircle,
 } from '@styled-icons/boxicons-solid';
-import { useState } from 'react';
+import { logout } from 'app/actions/login';
+import { getUserProfile } from 'app/actions/userProfile';
+import { getAuth } from 'app/selectors/login';
+import { notificationCountSelector } from 'app/selectors/notificationCount';
+import { getSocket } from 'app/selectors/socket';
+import { ReactComponent as Message } from 'assets/images/icons/chat-fill.svg';
+import LogoImg from 'assets/images/logos/logo.jpg';
+import React, { useRef, useState } from 'react';
 import { ListGroup, Overlay, Popover } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from 'app/actions/login';
-import { getAuth } from 'app/selectors/login';
-import { useNavigate, Link } from 'react-router-dom';
-import { getSocket } from 'app/selectors/socket';
-import { getUserProfile } from 'app/actions/userProfile';
-import { notificationCountSelector } from 'app/selectors/notificationCount';
-import { SetNotification } from 'components/Notification/notification';
-import { getNotificationCount } from 'app/actions/notificationCount';
-import { getListConversation } from 'app/actions/conversations';
+import { useNavigate } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 const HoverEffect = css`
   transition: all 0.3s ease-in-out;
