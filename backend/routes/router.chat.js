@@ -7,4 +7,7 @@ api.get('/old-message', authMiddleware.verifyToken, messageController.getOldMess
 api.get('/older-message', authMiddleware.verifyToken, messageController.getOlderMessage);
 api.get('/link-preview', authMiddleware.verifyToken, messageController.getContentLinkPreview);
 // api.get('/chat-list',authMiddleware.verifyToken, messageController.getChatList)
+api.get('/image-and-video', authMiddleware.verifyToken, messageController.getImageAndVideo);
+api.get('/files', authMiddleware.verifyToken, messageController.getFiles);
+api.get('/links', authMiddleware.verifyToken, messageController.getLinks);
 module.exports = api;

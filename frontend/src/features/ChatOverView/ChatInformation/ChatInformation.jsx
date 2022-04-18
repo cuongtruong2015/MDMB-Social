@@ -1,9 +1,10 @@
-import styled, { css } from 'styled-components';
-import userApi from 'apis/userApi';
-import React from 'react';
-import LogoImg from 'assets/images/logos/logo.jpg';
-import { getUsersOnline } from 'app/selectors/socket';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  ArrowBack,
+  File,
+  Images,
+  Link,
+  PlayCircle,
+} from '@styled-icons/boxicons-regular';
 import {
   BellOff,
   BellRing,
@@ -11,30 +12,43 @@ import {
   ChevronUp,
   EditAlt,
 } from '@styled-icons/boxicons-solid';
+import { X } from '@styled-icons/heroicons-outline';
+import userApi from 'apis/userApi';
+import { getFiles, getMedia, getLinks } from 'app/actions/mediaAndFiles';
 import { getListRelationshipSelector } from 'app/selectors/listRelationship';
-import { useNavigate } from '../../../../node_modules/react-router-dom/index';
+import {
+  filesSelector,
+  mediaSelector,
+  linksSelector,
+} from 'app/selectors/mediaAndFiles';
+import { getSocket, getUsersOnline } from 'app/selectors/socket';
+import LogoImg from 'assets/images/logos/logo.jpg';
+import { NimblePicker } from 'emoji-mart';
+import data from 'emoji-mart/data/google.json';
+import React, { useEffect } from 'react';
+import { Modal } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import styled, { css } from 'styled-components';
 import Swal from 'sweetalert2';
-import { getListRelationship } from 'app/actions/listRelationship';
 import {
   changeIcon,
   ChangeNickname,
   handleNotification,
   removeButtonIcon,
 } from 'utils/ChatInfor';
-import { getSocket } from 'app/selectors/socket';
-import { NimblePicker } from 'emoji-mart';
-import data from 'emoji-mart/data/google.json';
-import { X } from '@styled-icons/heroicons-outline';
-import { Modal, Button } from 'react-bootstrap';
-import { FastForwardCircle } from '../../../../node_modules/@styled-icons/boxicons-regular/index';
-
+import { useNavigate } from '../../../../node_modules/react-router-dom/index';
+import Files from './MediaAndFiles/Files';
+import Links from './MediaAndFiles/Link';
+import MediaList from './MediaAndFiles/Media';
 const Wrapper = styled.div`
   padding: 10% 0px 10% 0px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin-right: 20px;
+  transition: 3s all;
+  height: 100vh;
 `;
 const Avatar = styled.div`
   img {
@@ -113,6 +127,8 @@ const CustomFeature = styled.div`
 `;
 const NameCustom = styled.div``;
 const IconHolder = styled.div`
+  width: 1.5rem;
+  height: 1.5rem;
   margin-right: 5px;
 `;
 const HeaderCustom = styled.div`
@@ -136,10 +152,8 @@ const DropdownAlreadyIcon = styled(ChevronUp)`
   margin-left: auto;
   align-self: center;
 `;
-const EditIcon = styled(EditAlt)`
-  width: 1.5rem;
-  height: 1.5rem;
-`;
+const EditIcon = styled(EditAlt)``;
+
 const EmojiModal = styled(Modal)`
   width: fit-content;
   height: fit-content;
@@ -194,6 +208,48 @@ const BodyModal = styled.div`
   border: 1px solid #e6e3e3;
   border-radius: 10px;
 `;
+const MediaFileHeader = styled.div`
+  margin-left: 10px;
+`;
+const SwapFeature = styled.div`
+  display: flex;
+  font-size: 1.3rem;
+  flex-direction: row;
+  justify-content: space-evenly;
+`;
+const AFeature = styled.div`
+  width: 100px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 10px 10px 0 0;
+  &:hover {
+    filter: brightness(0.8);
+  }
+  border-bottom: ${({ show }) => (show ? '3px solid #4849a1;' : 'unset')};
+  color: ${({ show }) => (show ? '#5859b6' : 'unset')};
+`;
+const MediaFiles = styled.div`
+  font-size: 1.3rem;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 20px;
+`;
+const BackArowIcon = styled(ArrowBack)`
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #fff;
+  width: 2rem;
+  height: 2rem;
+  padding: 5px;
+  align-items: center;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
+`;
+
 export default function ChatInformation({ partnerId, userInfo }) {
   const socket = useSelector(getSocket);
   const navigate = useNavigate();
@@ -261,95 +317,174 @@ export default function ChatInformation({ partnerId, userInfo }) {
     removeButtonIcon(data.native, user, userApi, dispatch, socket);
     setShowEmojiDialog(false);
   };
+  // Media, Files, Link
+  const [showMedia, setShowMedia] = React.useState(false);
+  const [showFiles, setShowFiles] = React.useState(false);
+  const [showLink, setShowLink] = React.useState(false);
+  const handleMediaClick = () => {
+    removeState();
+    setShowMedia(true);
+  };
+  const handleFilesClick = () => {
+    removeState();
+    setShowFiles(true);
+  };
+  const handleLinkClick = () => {
+    removeState();
+    setShowLink(true);
+  };
+  const handleBackClick = () => {
+    removeState();
+  };
+  const removeState = () => {
+    setShowLink(false);
+    setShowFiles(false);
+    setShowMedia(false);
+  };
+  const listMedia = useSelector(mediaSelector);
+  const listFiles = useSelector(filesSelector);
+  const listLink = useSelector(linksSelector);
+  useEffect(() => {
+    if (showMedia) dispatch(getMedia(userInfo.AccountId, partnerId));
+    if (showFiles) dispatch(getFiles(userInfo.AccountId, partnerId));
+    if (showLink) dispatch(getLinks(userInfo.AccountId, partnerId));
+  }, [showLink, showFiles, showMedia]);
+  // Media, Files, Link end
   return (
-    <Wrapper>
-      <EmojiModal
-        show={showEmojiDialog}
-        onHide={() => {
-          setShowEmojiDialog(false);
-        }}
-      >
-        <BodyModal>
-          <HeaderEmojiDialog>Pick Your Button Emoji</HeaderEmojiDialog>
-          {currentEmoji && (
-            <CurrentEmojiWrapper>
-              <Text>Current Icon:</Text>
-              <EmojiHolder>{currentEmoji}</EmojiHolder>
-              <ButtonRemoveEmoji onClick={handleRemoveButtonIcon}>
-                <RemoveEmojiIcon />
-                Remove
-              </ButtonRemoveEmoji>
-            </CurrentEmojiWrapper>
-          )}
-          <NimblePicker
-            style={{
-              border: '0px',
-              borderRadius: '0px',
+    <>
+      {showMedia || showFiles || showLink ? (
+        <Wrapper>
+          <MediaFiles>
+            <BackArowIcon onClick={handleBackClick} />
+            <MediaFileHeader>
+              {showMedia ? 'Media' : showFiles ? 'Files' : showLink && 'Link'}
+            </MediaFileHeader>
+          </MediaFiles>
+          <SwapFeature>
+            <AFeature show={showMedia} onClick={handleMediaClick}>
+              Media
+            </AFeature>
+            <AFeature show={showFiles} onClick={handleFilesClick}>
+              Files
+            </AFeature>
+            <AFeature show={showLink} onClick={handleLinkClick}>
+              Link
+            </AFeature>
+          </SwapFeature>
+          {showMedia && <MediaList listMedia={listMedia} />}
+          {showFiles && <Files listFiles={listFiles} />}
+          {showLink && <Links listLink={listLink} />}
+        </Wrapper>
+      ) : (
+        <Wrapper>
+          <EmojiModal
+            show={showEmojiDialog}
+            onHide={() => {
+              setShowEmojiDialog(false);
             }}
-            onSelect={onEmojiClick}
-            native={true}
-            data={data}
-            set={'google'}
-            emojiSize={32}
-            perLine={6}
-            sheetSize={32}
-            showSkinTones={false}
-            skinTone={1}
-            showPreview={false}
-            showSearch={false}
-          />
-        </BodyModal>
-      </EmojiModal>
-
-      <Avatar>
-        <img src={user?.Avatar} alt="avatar" />
-      </Avatar>
-      <Name onClick={redirecteUserInfor}>{user?.Name}</Name>
-      <Online>{OnlineStatus}</Online>
-      <Featuter>
-        <FeatuterWrapper>
-          <Logo onClick={redirecteUserInfor} />
-          <FeatureName>Personal page</FeatureName>
-        </FeatuterWrapper>
-        <FeatuterWrapper>
-          <div onClick={handleNotificationClick}>
-            {!notification ? <IconNotificationOn /> : <IconNotificationOff />}
-          </div>
-          <FeatureName>{notification ? 'Turn off' : 'Turn on'}</FeatureName>
-        </FeatuterWrapper>
-      </Featuter>
-      <CustomFeatureWrapper show={showCustomizeChat}>
-        <HeaderCustom onClick={handleChatCustomizeClick}>
-          <HeaderName>Customize chat</HeaderName>
-          {showCustomizeChat ? <DropdownAlreadyIcon /> : <DropdownIcon />}
-        </HeaderCustom>
-        {showCustomizeChat && (
-          <>
-            <CustomFeature onClick={handleEmojiCustomClick}>
-              <IconHolder>😆</IconHolder>
-              <NameCustom>Change send emotion</NameCustom>
-            </CustomFeature>
-            <CustomFeature onClick={HandleChangeNickname}>
-              <IconHolder>
-                <EditIcon />
-              </IconHolder>
-              <NameCustom>Edit nickname</NameCustom>
-            </CustomFeature>
-          </>
-        )}
-      </CustomFeatureWrapper>
-
-      <CustomFeatureWrapper show={showMediaFile}>
-        <HeaderCustom onClick={handleMediaFileClick}>
-          <HeaderName>Media, Files</HeaderName>
-          {showMediaFile ? <DropdownAlreadyIcon /> : <DropdownIcon />}
-        </HeaderCustom>
-        {showMediaFile && (
-          <CustomFeature>
-            <NameCustom>Change Icon</NameCustom>
-          </CustomFeature>
-        )}
-      </CustomFeatureWrapper>
-    </Wrapper>
+          >
+            <BodyModal>
+              <HeaderEmojiDialog>Pick Your Button Emoji</HeaderEmojiDialog>
+              {currentEmoji && (
+                <CurrentEmojiWrapper>
+                  <Text>Current Icon:</Text>
+                  <EmojiHolder>{currentEmoji}</EmojiHolder>
+                  <ButtonRemoveEmoji onClick={handleRemoveButtonIcon}>
+                    <RemoveEmojiIcon />
+                    Remove
+                  </ButtonRemoveEmoji>
+                </CurrentEmojiWrapper>
+              )}
+              <NimblePicker
+                style={{
+                  border: '0px',
+                  borderRadius: '0px',
+                }}
+                onSelect={onEmojiClick}
+                native={true}
+                data={data}
+                set={'google'}
+                emojiSize={32}
+                perLine={6}
+                sheetSize={32}
+                showSkinTones={false}
+                skinTone={1}
+                showPreview={false}
+                showSearch={false}
+              />
+            </BodyModal>
+          </EmojiModal>
+          <Avatar>
+            <img src={user?.Avatar} alt="avatar" />
+          </Avatar>
+          <Name onClick={redirecteUserInfor}>{user?.Name}</Name>
+          <Online>{OnlineStatus}</Online>
+          <Featuter>
+            <FeatuterWrapper>
+              <Logo onClick={redirecteUserInfor} />
+              <FeatureName>Personal page</FeatureName>
+            </FeatuterWrapper>
+            <FeatuterWrapper>
+              <div onClick={handleNotificationClick}>
+                {!notification ? (
+                  <IconNotificationOn />
+                ) : (
+                  <IconNotificationOff />
+                )}
+              </div>
+              <FeatureName>{notification ? 'Turn off' : 'Turn on'}</FeatureName>
+            </FeatuterWrapper>
+          </Featuter>
+          <CustomFeatureWrapper show={showCustomizeChat}>
+            <HeaderCustom onClick={handleChatCustomizeClick}>
+              <HeaderName>Customize chat</HeaderName>
+              {showCustomizeChat ? <DropdownAlreadyIcon /> : <DropdownIcon />}
+            </HeaderCustom>
+            {showCustomizeChat && (
+              <>
+                <CustomFeature onClick={handleEmojiCustomClick}>
+                  <IconHolder>😆</IconHolder>
+                  <NameCustom>Change send emotion</NameCustom>
+                </CustomFeature>
+                <CustomFeature onClick={HandleChangeNickname}>
+                  <IconHolder>
+                    <EditIcon />
+                  </IconHolder>
+                  <NameCustom>Edit nickname</NameCustom>
+                </CustomFeature>
+              </>
+            )}
+          </CustomFeatureWrapper>
+          <CustomFeatureWrapper show={showMediaFile}>
+            <HeaderCustom onClick={handleMediaFileClick}>
+              <HeaderName>Media, Files</HeaderName>
+              {showMediaFile ? <DropdownAlreadyIcon /> : <DropdownIcon />}
+            </HeaderCustom>
+            {showMediaFile && (
+              <>
+                <CustomFeature onClick={handleMediaClick}>
+                  <IconHolder>
+                    <Images />
+                  </IconHolder>
+                  <NameCustom>Media</NameCustom>
+                </CustomFeature>
+                <CustomFeature onClick={handleFilesClick}>
+                  <IconHolder>
+                    <File />
+                  </IconHolder>
+                  <NameCustom>Files</NameCustom>
+                </CustomFeature>
+                <CustomFeature onClick={handleLinkClick}>
+                  <IconHolder>
+                    <Link />
+                  </IconHolder>
+                  <NameCustom>Links</NameCustom>
+                </CustomFeature>
+              </>
+            )}
+          </CustomFeatureWrapper>
+        </Wrapper>
+      )}
+    </>
   );
 }

@@ -124,11 +124,72 @@ function getMessageById(messageId) {
 
     });
 }
+function getImageAndVideo(accountId, friendId, Callback) {
+    connection.pool.getConnection(function (err, con) {
+        if (err) throw err;
+        var sql = `SELECT *  FROM MDMB.MessageToUser where(( FromAccount =? and ToAccount=?)
+        or ( FromAccount =? and ToAccount=?)) and (Type = 1 or Type =2) limit 20;`;
+        con.query(sql, [accountId, friendId, friendId, accountId],
+            function (err, result) {
+                con.release();
+                if (err) throw err;
+                if (result.length > 0) {
+                    var listMessage = [];
+                    result.forEach(item => {
+                        listMessage.push(new messageToUser.MessageToUser(item.MessageId, item.FromAccount, item.SentDate, item.Content, item.Type, item.ToAccount, item.SeenDate));
+                    });
+                    return Callback(listMessage);
+                } else return Callback(false);
+            });
+    });
+}
 
+function getFiles(accountId, friendId, Callback) {
+    connection.pool.getConnection(function (err, con) {
+        if (err) throw err;
+        var sql = `SELECT *  FROM MDMB.MessageToUser where(( FromAccount =? and ToAccount=?)
+        or ( FromAccount =? and ToAccount=?)) and Type = 3 limit 20;`;
+        con.query(sql, [accountId, friendId, friendId, accountId],
+            function (err, result) {
+                con.release();
+                if (err) throw err;
+                if (result.length > 0) {
+                    var listMessage = [];
+                    result.forEach(item => {
+                        listMessage.push(new messageToUser.MessageToUser(item.MessageId, item.FromAccount, item.SentDate, item.Content, item.Type, item.ToAccount, item.SeenDate));
+                    });
+                    return Callback(listMessage);
+                } else return Callback(false);
+            });
+    });
+}
+
+function getTop1000Message(accountId, friendId, Callback) {
+    connection.pool.getConnection(function (err, con) {
+        if (err) throw err;
+        var sql = `SELECT *  FROM MDMB.MessageToUser where(( FromAccount =? and ToAccount=?)
+        or ( FromAccount =? and ToAccount=?)) and Type = 0 limit 1000;`;
+        con.query(sql, [accountId, friendId, friendId, accountId],
+            function (err, result) {
+                con.release();
+                if (err) throw err;
+                if (result.length > 0) {
+                    var listMessage = [];
+                    result.forEach(item => {
+                        listMessage.push(new messageToUser.MessageToUser(item.MessageId, item.FromAccount, item.SentDate, item.Content, item.Type, item.ToAccount, item.SeenDate));
+                    });
+                    return Callback(listMessage);
+                } else return Callback(false);
+            });
+    });
+}
 module.exports = {
     getOldMessage,
     getOlderMessage,
     addMessage,
     seenMessage,
-    getMessageById
+    getMessageById,
+    getImageAndVideo,
+    getFiles,
+    getTop1000Message,
 }

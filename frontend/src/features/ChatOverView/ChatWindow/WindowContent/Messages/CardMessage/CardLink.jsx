@@ -51,7 +51,7 @@ const Thumbnail = styled.img`
 function checkUrlInState(url, urlInfor) {
   var temp = false;
   urlInfor.forEach((element) => {
-    if (element.url.includes(url)) temp = true;
+    if (element.url?.includes(url)) temp = true;
   });
   return temp;
 }
@@ -77,7 +77,6 @@ function CardLink({ url, content, owner }) {
   }
   var urlDisplay;
   if (checkUrlInState(url, urlInfor)) urlDisplay = getUrlDisplay(url, urlInfor);
-  var words = content.split(url);
   return (
     <WarpLink onClick={handleClick}>
       <WarpRawLink owner={owner}>{content}</WarpRawLink>

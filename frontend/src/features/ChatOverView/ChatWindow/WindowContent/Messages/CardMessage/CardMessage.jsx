@@ -114,25 +114,21 @@ const SentStatus = styled(CheckCircle)`
   color: #4849a1;
 `;
 const ImageMessageWrapper = styled.div`
-  max-height: 200px;
   cursor: pointer;
-
   img,
   video {
+    height: fit-content;
     max-width: 200px;
     max-height: 200px;
-    margin-bottom: 10px;
     border-radius: 4%;
-    &:hover {
-    }
   }
 `;
+const ButtonVideo = styled.div``;
 const IconPlay = styled(PlayCircle)`
-  position: relative;
-  width: 4rem;
-  margin-top: -200%;
-  margin-left: 20%;
+  width: 1.5rem;
+  height: 1.5rem;
   color: #fff;
+  position: absolute;
 `;
 const FileMessageWrapper = styled.div`
   display: flex;
@@ -190,7 +186,7 @@ function CardMessage(props) {
   let isLink = regexContainLink.test(content);
   if (isLink) {
     var url = content.match(regexContainLink)?.[0];
-    isLink = pattern.test(url);
+    // isLink = pattern.test(url);
   }
   return (
     <Wrapper owner={owner ? 1 : 0}>
@@ -219,10 +215,10 @@ function CardMessage(props) {
                       </ImageMessageWrapper>
                     ) : type === 2 ? (
                       <ImageMessageWrapper>
-                        <video src={content} alt="" />
-                        <div>
+                        <ButtonVideo>
                           <IconPlay />
-                        </div>
+                        </ButtonVideo>
+                        <video className="video" src={content} alt=""></video>
                       </ImageMessageWrapper>
                     ) : (
                       type === 3 && (

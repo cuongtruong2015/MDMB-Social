@@ -15,6 +15,7 @@ import listRelationshipReducer from 'features/UserInfor/listRelationshipSlice';
 import listFriendRecommendedReducer from 'features/Contact/RightSide/ListFriendRecommendSlice';
 import notificationReducer from 'features/ChatOverView/ChatConversations/notificationCountSlice';
 import odlerMessageReducer from 'features/ChatOverView/ChatWindow/WindowContent/Messages/olderMessageSlice';
+import listMediaReducer from 'features/ChatOverView/ChatInformation/chatInforSlice';
 
 const appReducer = combineReducers({
   login: loginReducer,
@@ -31,6 +32,7 @@ const appReducer = combineReducers({
   listFriendRecommended: listFriendRecommendedReducer,
   notificationCount: notificationReducer,
   olderMessage: odlerMessageReducer,
+  listMedia: listMediaReducer,
 });
 
 const rootReducer = (state, action) => {

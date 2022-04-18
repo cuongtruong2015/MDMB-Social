@@ -87,10 +87,75 @@ function getContentLinkPreview(req, res) {
             res.status(200).json({ error: err });
         });
 }
+function getImageAndVideo(req, res) {
 
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+
+    messageToUserDAO.getImageAndVideo(accountId, friendId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                } catch (error) {
+                    // console.log(error);
+                }
+            });
+            res.status(200).json(listMessage);
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
+function getFiles(req, res) {
+
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+
+    messageToUserDAO.getFiles(accountId, friendId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                } catch (error) {
+                    // console.log(error);
+                }
+            });
+            res.status(200).json(listMessage);
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
+function getLinks(req, res) {
+
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+    const regexContainLink =
+        /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+    listContainLink = [];
+    messageToUserDAO.getTop1000Message(accountId, friendId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                    if (regexContainLink.test(message.Content)) listContainLink.push(message)
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+            res.status(200).json(listContainLink);
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
 module.exports = {
     getOldMessage,
     getOlderMessage,
     getContentLinkPreview,
+    getImageAndVideo,
+    getFiles,
+    getLinks,
     // getChatList
 };
