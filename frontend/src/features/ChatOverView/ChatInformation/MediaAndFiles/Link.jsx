@@ -1,5 +1,10 @@
 import { Link } from '@styled-icons/boxicons-regular';
-import { mediaAndFilesFetchingSelector } from 'app/selectors/mediaAndFiles';
+import { getMoreLink } from 'app/actions/mediaAndFiles';
+import {
+  isUpdateMediaAndFileSelector,
+  mediaAndFilesFetchingSelector,
+  moreLinkSelector,
+} from 'app/selectors/mediaAndFiles';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -75,7 +80,7 @@ const NoLink = styled.div`
   width: 100%;
   text-align: center;
 `;
-export default function Links({ listLink }) {
+export default function Links({ listLink, user }) {
   const regexContainLink =
     /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
   var newListLink = [];
@@ -88,8 +93,42 @@ export default function Links({ listLink }) {
       url = 'https://' + url;
     window.open(url, '_blank').focus();
   };
-
   const isFetching = useSelector(mediaAndFilesFetchingSelector);
+  //more link scroll
+  const dispatch = useDispatch();
+  const partnerId = user?.AccountId;
+  const YourAccountId =
+    user?.AccountId === user?.RelatingAccountId
+      ? user?.RelatedAccountId
+      : user?.RelatingAccountId;
+  const minMessageId = listLink?.reduce(
+    (a, b) => (a.MessageId < b.MessageId ? a.MessageId : b.MessageId),
+    0
+  );
+  const MoreLink = useSelector(moreLinkSelector) || [];
+  const isUpdateMessage = useSelector(isUpdateMediaAndFileSelector);
+  const minMoreLinkMessageId = MoreLink?.reduce(
+    (a, b) => (a?.MessageId < b?.MessageId ? a?.MessageId : b?.MessageId),
+    0
+  );
+  const handleScroll = (e) => {
+    const scrollElement = e.target;
+    if (
+      scrollElement.offsetHeight + scrollElement.scrollTop >=
+      scrollElement.scrollHeight - 2
+    ) {
+      if (!(isUpdateMessage === 'no update')) {
+        dispatch(
+          getMoreLink(
+            YourAccountId,
+            partnerId,
+            !minMoreLinkMessageId ? minMessageId : minMoreLinkMessageId
+          )
+        );
+        e.target.scrollTop = scrollElement.scrollHeight / 2;
+      }
+    }
+  };
   return (
     <Wrapper>
       {!isFetching && newListLink?.length === 0 && (

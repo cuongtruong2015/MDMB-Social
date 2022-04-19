@@ -1,4 +1,4 @@
-import { mediaTypes, FileTypes, LinkTypes, MoreMediaTypes } from 'app/actions/types/mediaAndFileTypes';
+import { mediaTypes, FileTypes, LinkTypes, MoreMediaTypes, MoreFileTypes, MoreLinkTypes } from 'app/actions/types/mediaAndFileTypes';
 
 const initialState = {
     isFetching: false,
@@ -9,6 +9,8 @@ const initialState = {
     listFiles: [],
     listLink: [],
     moreMedia: [],
+    moreFile: [],
+    moreLink: [],
 };
 const listMediaReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -99,7 +101,7 @@ const listMediaReducer = (state = initialState, action) => {
                 message: null,
             };
         case MoreMediaTypes.GET_MORE_MEDIA_SUCCESS:
-            var obj = state.moreMedia;
+            var obj = state.moreMedia || [];
             var check = false;
             for (let i = 0; i < action.payload.length; i++) {
                 for (let j = 0; j < obj.length; j++) {
@@ -109,7 +111,7 @@ const listMediaReducer = (state = initialState, action) => {
                 }
             }
             if (!check) obj = [...obj, ...action.payload]
-            if (check) var msg = "no update"
+            if (check || !action.payload[0]) var msg = "no update";
             else var msg = null;
             return {
                 ...state,
@@ -126,6 +128,117 @@ const listMediaReducer = (state = initialState, action) => {
                 error: true,
                 success: false,
                 message: action.payload.message,
+            };
+        case MoreMediaTypes.REMOVE_MORE_MEDIA_START:
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: false,
+                message: null,
+            };
+        case MoreMediaTypes.REMOVE_MORE_MEDIA_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: true,
+                message: null,
+                moreMedia: []
+            };
+        //----------------get more file------------------------------//
+        case MoreFileTypes.GET_MORE_File_START:
+            return {
+                ...state,
+                isFetching: true,
+                error: false,
+                success: false,
+                message: null,
+            };
+        case MoreFileTypes.GET_MORE_File_SUCCESS:
+            var obj = state.moreFile || [];
+            var check = false;
+            for (let i = 0; i < action.payload.length; i++) {
+                for (let j = 0; j < obj.length; j++) {
+                    if (obj[j].MessageId === action.payload[i].MessageId) {
+                        check = true;
+                    }
+                }
+            }
+            if (!check) obj = [...obj, ...action.payload]
+            if (check || !action.payload[0]) var msg = "no update";
+            else var msg = null;
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: true,
+                message: msg,
+                moreFile: obj,
+            };
+        case MoreFileTypes.GET_MORE_File_FAILURE:
+            return {
+                ...state,
+                isFetching: false,
+                error: true,
+                success: false,
+                message: action.payload.message,
+            };
+        case MoreFileTypes.REMOVE_MORE_File_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: true,
+                message: null,
+                moreFile: []
+            };
+        //----------------get more link------------------------------//
+        case MoreLinkTypes.GET_MORE_LINK_START:
+            return {
+                ...state,
+                isFetching: true,
+                error: false,
+                success: false,
+                message: null,
+            };
+        case MoreLinkTypes.GET_MORE_LINK_SUCCESS:
+            var obj = state.moreLink || [];
+            var check = false;
+            for (let i = 0; i < action.payload.length; i++) {
+                for (let j = 0; j < obj.length; j++) {
+                    if (obj[j].MessageId === action.payload[i].MessageId) {
+                        check = true;
+                    }
+                }
+            }
+            if (!check) obj = [...obj, ...action.payload]
+            if (check || !action.payload[0]) var msg = "no update";
+            else var msg = null;
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: true,
+                message: msg,
+                moreLink: obj,
+            };
+        case MoreLinkTypes.GET_MORE_LINK_FAILURE:
+            return {
+                ...state,
+                isFetching: false,
+                error: true,
+                success: false,
+                message: action.payload.message,
+            };
+        case MoreLinkTypes.REMOVE_MORE_Link_SUCCESS:
+            return {
+                ...state,
+                isFetching: false,
+                error: false,
+                success: true,
+                message: null,
+                moreLink: []
             };
         default:
             return state;

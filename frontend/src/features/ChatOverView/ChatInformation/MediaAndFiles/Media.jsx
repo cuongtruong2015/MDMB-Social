@@ -8,7 +8,7 @@ import {
 } from '@styled-icons/boxicons-regular';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  isUpdateMediaSelector,
+  isUpdateMediaAndFileSelector,
   mediaAndFilesFetchingSelector,
   moreMediaSelector,
 } from 'app/selectors/mediaAndFiles';
@@ -103,10 +103,9 @@ export default function MediaList({ listMedia, onMediaClick, user }) {
     0
   );
   const MoreMedia = useSelector(moreMediaSelector) || [];
-  const isUpdateMessage = useSelector(isUpdateMediaSelector);
-
+  const isUpdateMessage = useSelector(isUpdateMediaAndFileSelector);
   const minMoreMediaMessageId = MoreMedia?.reduce(
-    (a, b) => (a.MessageId < b.MessageId ? a.MessageId : b.MessageId),
+    (a, b) => (a?.MessageId < b?.MessageId ? a?.MessageId : b?.MessageId),
     0
   );
   const handleScroll = (e) => {
@@ -127,6 +126,7 @@ export default function MediaList({ listMedia, onMediaClick, user }) {
       }
     }
   };
+
   return (
     <WrapperMediaContent onScroll={handleScroll}>
       {!isFetching && listMedia?.length === 0 && (
@@ -167,12 +167,12 @@ export default function MediaList({ listMedia, onMediaClick, user }) {
               )}
             </ImageWrapper>
           ))}
-        {isFetching && (
-          <LoadingWrapper>
-            <Loading />
-          </LoadingWrapper>
-        )}
       </ImagePlace>
+      {isFetching && (
+        <LoadingWrapper>
+          <Loading />
+        </LoadingWrapper>
+      )}
     </WrapperMediaContent>
   );
 }

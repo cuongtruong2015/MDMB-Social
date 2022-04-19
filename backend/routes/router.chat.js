@@ -11,4 +11,6 @@ api.get('/image-and-video', authMiddleware.verifyToken, messageController.getIma
 api.get('/files', authMiddleware.verifyToken, messageController.getFiles);
 api.get('/links', authMiddleware.verifyToken, messageController.getLinks);
 api.get('/more-image-and-video', authMiddleware.verifyToken, messageController.getMoreImageAndVideo);
+api.get('/more-files', authMiddleware.verifyToken, messageController.getMoreFiles);
+api.get('/more-links', authMiddleware.verifyToken, messageController.getMoreLinks);
 module.exports = api;

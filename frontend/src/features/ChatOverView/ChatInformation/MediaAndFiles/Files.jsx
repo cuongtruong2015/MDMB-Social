@@ -1,6 +1,11 @@
 import { File } from '@styled-icons/boxicons-regular';
-import { mediaAndFilesFetchingSelector } from 'app/selectors/mediaAndFiles';
-import { useSelector } from 'react-redux';
+import { getMoreFile } from 'app/actions/mediaAndFiles';
+import {
+  isUpdateMediaAndFileSelector,
+  mediaAndFilesFetchingSelector,
+  moreFileSelector,
+} from 'app/selectors/mediaAndFiles';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -74,16 +79,71 @@ const NoFile = styled.div`
   width: 100%;
   text-align: center;
 `;
-export default function Files({ listFiles }) {
+export default function Files({ listFiles, user }) {
   const isFetching = useSelector(mediaAndFilesFetchingSelector);
+  const dispatch = useDispatch();
+  const partnerId = user?.AccountId;
+  const YourAccountId =
+    user?.AccountId === user?.RelatingAccountId
+      ? user?.RelatedAccountId
+      : user?.RelatingAccountId;
+  const minMessageId = listFiles?.reduce(
+    (a, b) => (a.MessageId < b.MessageId ? a.MessageId : b.MessageId),
+    0
+  );
+  const MoreFile = useSelector(moreFileSelector) || [];
+  const isUpdateMessage = useSelector(isUpdateMediaAndFileSelector);
+  const minMoreFileMessageId = MoreFile?.reduce(
+    (a, b) => (a?.MessageId < b?.MessageId ? a?.MessageId : b?.MessageId),
+    0
+  );
+  const handleScroll = (e) => {
+    const scrollElement = e.target;
+    if (
+      scrollElement.offsetHeight + scrollElement.scrollTop >=
+      scrollElement.scrollHeight - 2
+    ) {
+      if (!(isUpdateMessage === 'no update')) {
+        dispatch(
+          getMoreFile(
+            YourAccountId,
+            partnerId,
+            !minMoreFileMessageId ? minMessageId : minMoreFileMessageId
+          )
+        );
+        e.target.scrollTop = scrollElement.scrollHeight / 2;
+      }
+    }
+  };
+
+  console.log(MoreFile);
   return (
     <Wrapper>
       {!isFetching && listFiles?.length === 0 && (
         <NoFile>No File to display</NoFile>
       )}
-      <FileList>
+      <FileList onScroll={handleScroll}>
         {!isFetching &&
           listFiles?.map((item, index) => (
+            <Fileitem
+              key={index}
+              onClick={() => (window.location.href = item.Content)}
+            >
+              <FileIcon />
+              <FileName>
+                {decodeURIComponent(
+                  ''.concat(
+                    item.Content?.substring(
+                      item.Content?.indexOf('%2F') + 3,
+                      item.Content?.indexOf('?')
+                    )
+                  )
+                )}
+              </FileName>
+            </Fileitem>
+          ))}
+        {!isFetching &&
+          MoreFile?.map((item, index) => (
             <Fileitem
               key={index}
               onClick={() => (window.location.href = item.Content)}

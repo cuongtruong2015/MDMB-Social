@@ -14,7 +14,14 @@ import {
 } from '@styled-icons/boxicons-solid';
 import { X } from '@styled-icons/heroicons-outline';
 import userApi from 'apis/userApi';
-import { getFiles, getMedia, getLinks } from 'app/actions/mediaAndFiles';
+import {
+  getFiles,
+  getMedia,
+  getLinks,
+  removeMoreMedia,
+  removeMoreFile,
+  removeMoreLink,
+} from 'app/actions/mediaAndFiles';
 import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 import {
   filesSelector,
@@ -358,11 +365,16 @@ export default function ChatInformation({
   useEffect(() => {
     if (showOverlay) setShowMedia(true);
   }, [showOverlay]);
-  // Media, Files, Link end
   const onMediaClick = (item) => {
     setShowMedia(true);
     showMediaOverlay(item);
   };
+  useEffect(() => {
+    dispatch(removeMoreMedia());
+    dispatch(removeMoreFile());
+    dispatch(removeMoreLink());
+  }, [partnerId]);
+  // Media, Files, Link end
   return (
     <>
       {showMedia || showFiles || showLink ? (

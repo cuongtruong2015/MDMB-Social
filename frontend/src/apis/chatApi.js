@@ -25,6 +25,14 @@ const chatApi = {
   getMoreListImageAndVideo: (myAccountId, yourAccountId, messageId) => {
     const url = `/chat/more-image-and-video?accountId=${myAccountId}&friendId=${yourAccountId}&messageId=${messageId}`;
     return axiosClient.get(url);
+  },
+  getMoreFiles: (myAccountId, yourAccountId, messageId) => {
+    const url = `/chat/more-files?accountId=${myAccountId}&friendId=${yourAccountId}&messageId=${messageId}`;
+    return axiosClient.get(url);
+  },
+  getMoreLinks: (myAccountId, yourAccountId, messageId) => {
+    const url = `/chat/more-links?accountId=${myAccountId}&friendId=${yourAccountId}&messageId=${messageId}`;
+    return axiosClient.get(url);
   }
 };
 export default chatApi;

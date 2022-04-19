@@ -127,8 +127,8 @@ function getFiles(req, res) {
         }
     });
 }
-function getLinks(req, res) {
 
+function getLinks(req, res) {
     let accountId = req.query.accountId;
     let friendId = req.query.friendId;
     const regexContainLink =
@@ -144,13 +144,32 @@ function getLinks(req, res) {
                     console.log(error);
                 }
             });
-            res.status(200).json(listContainLink);
+            res.status(200).json(listContainLink.slice(0, 21));
         } else {
             res.status(200).json([]);
         }
     });
 }
 function getMoreImageAndVideo(req, res) {
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+    let messageId = req.query.messageId;
+    messageToUserDAO.getMoreImageAndVideo(accountId, friendId, messageId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                } catch (error) {
+                    // console.log(error);
+                }
+            });
+            res.status(200).json(listMessage);
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
+function getMoreFiles(req, res) {
 
     let accountId = req.query.accountId;
     let friendId = req.query.friendId;
@@ -170,6 +189,30 @@ function getMoreImageAndVideo(req, res) {
         }
     });
 }
+
+function getMoreLinks(req, res) {
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+    let messageId = req.query.messageId;
+    const regexContainLink =
+        /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+    listContainLink = [];
+    messageToUserDAO.getTop1000Message(accountId, friendId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                    if (regexContainLink.test(message.Content) && message.MessageId < messageId) listContainLink.push(message)
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+            res.status(200).json(listContainLink.slice(0, 21));
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
 module.exports = {
     getOldMessage,
     getOlderMessage,
@@ -178,5 +221,7 @@ module.exports = {
     getFiles,
     getLinks,
     getMoreImageAndVideo,
+    getMoreFiles,
+    getMoreLinks,
     // getChatList
 };

@@ -10,8 +10,12 @@ export const mediaAndFilesFetchingSelector = (state) =>
     state?.listMedia?.isFetching;
 export const moreMediaSelector = (state) =>
     state?.listMedia?.moreMedia;
-export const isUpdateMediaSelector = (state) =>
+export const isUpdateMediaAndFileSelector = (state) =>
     state?.listMedia?.message;
+export const moreFileSelector = (state) =>
+    state?.listMedia?.moreFile;
+export const moreLinkSelector = (state) =>
+    state?.listMedia?.moreLink;
 
 
 
