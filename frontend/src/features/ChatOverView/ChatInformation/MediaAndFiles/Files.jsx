@@ -115,8 +115,6 @@ export default function Files({ listFiles, user }) {
       }
     }
   };
-
-  console.log(MoreFile);
   return (
     <Wrapper>
       {!isFetching && listFiles?.length === 0 && (

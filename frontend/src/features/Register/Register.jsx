@@ -169,7 +169,7 @@ function Register() {
       allowOutsideClick: false,
       title: isLocalType ? 'Awaiting Confirmation' : 'Welcome to our app',
       text: isLocalType
-        ? "If you haven't received our email in 3 hours, please check your spam folder."
+        ? "Please Check your email spam folder, If you haven't received our email in 3 hours, please try again."
         : messageRegister,
     }).then((result) => {
       if (result.value) {

@@ -134,7 +134,7 @@ export default function Links({ listLink, user }) {
       {!isFetching && newListLink?.length === 0 && (
         <NoLink>No Link to display</NoLink>
       )}
-      <FileList>
+      <FileList onScroll={handleScroll}>
         {!isFetching &&
           newListLink?.map((item, index) => (
             <Fileitem key={index} onClick={() => handleLinkClick(item.Content)}>

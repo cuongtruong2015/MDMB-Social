@@ -20,4 +20,8 @@ api.get("/insert-relationship", authMiddleware.verifyToken, accountController.Ad
 api.get("/list-have-relationship", authMiddleware.verifyToken, accountController.getListHaveRelationship);
 api.get("/list-friend-recommended", authMiddleware.verifyToken, accountController.getListFriendRecommended);
 api.get("/update-friend-relationship", authMiddleware.verifyToken, accountController.updateAccountRelationship);
+api.get("/check-account-existed", accountController.checkAccountExisted);
+api.get("/send-email-forgot-password", accountController.sendEmailForgotPassword);
+api.get("/check-token", accountController.checkTempToken);
+api.get("/change-password", accountController.changePassword);
 module.exports = api;

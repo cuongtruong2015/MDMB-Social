@@ -428,7 +428,75 @@ function updateAccountRelationship(RelatingAccountId, RelatedAccountId, Type, Bu
     });
   });
 }
-
+function checkAccountExisted(email) {
+  let sql = `SELECT * from MDMB.Account where Email=?;`
+  return new Promise((resolve, reject) => {
+    var con = connection.createConnection();
+    con.connect(function (err) {
+      if (err) throw err;
+      con.query(sql, [email],
+        function (err, result) {
+          connection.closeConnection(con);
+          if (err) return console.log(err);
+          if (result[0]) resolve(true);
+          else resolve(false)
+        });
+    });
+  });
+}
+function updateTempToken(token, tempCode, email) {
+  let sql = `Update MDMB.Account set TempToken=?,tempCode=? where email = ?`
+  return new Promise((resolve, reject) => {
+    var con = connection.createConnection();
+    con.connect(function (err) {
+      if (err) throw err;
+      con.query(sql, [token, tempCode, email],
+        function (err, result) {
+          connection.closeConnection(con);
+          if (err) resolve(false);
+          else resolve(true);
+        });
+    });
+  });
+}
+function getAccountByToken(tempToken, tempCode, email) {
+  let sql = `SELECT * FROM MDMB.Account where email = ? and (temptoken=? or tempCode=?);`
+  return new Promise((resolve, reject) => {
+    var con = connection.createConnection();
+    con.connect(function (err) {
+      if (err) throw err;
+      con.query(sql, [email, tempToken, tempCode],
+        function (err, result) {
+          connection.closeConnection(con);
+          if (err) resolve(false);
+          if (result[0]) resolve(true);
+          else resolve(false);
+        });
+    });
+  });
+}
+function updateAccountByToken(tempToken, tempCode, email, password) {
+  let sql = `Update MDMB.Account 
+  set password = ?,
+  TempToken = ?,
+  TempCode = ?
+  where email =?
+  and ( TempToken=? or TempCode = ?);
+  `
+  return new Promise((resolve, reject) => {
+    var con = connection.createConnection();
+    con.connect(function (err) {
+      if (err) throw err;
+      con.query(sql, [password, null, null, email, tempToken, tempCode],
+        function (err, result) {
+          connection.closeConnection(con);
+          if (err) console.log(err);
+          if (result?.changedRows > 0) resolve(true);
+          else resolve(false);
+        });
+    });
+  });
+}
 module.exports = {
   getAccount,
   getAccountByEmail,
@@ -446,5 +514,9 @@ module.exports = {
   getListHaveRelationship,
   deleteRelationship,
   getListFriendRecommended,
-  updateAccountRelationship
+  updateAccountRelationship,
+  checkAccountExisted,
+  updateTempToken,
+  getAccountByToken,
+  updateAccountByToken,
 }

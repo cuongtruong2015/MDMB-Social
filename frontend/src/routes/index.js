@@ -11,7 +11,8 @@ import Login from 'features/Login/Login';
 import Register from 'features/Register/Register';
 import UpdateProfile from 'features/UpdateProfile/UpdateProfile';
 import UserInfor from 'features/UserInfor/UserInfor';
-
+import Forgot from 'features/Forgot/Forgot';
+import ChangePassword from 'features/ChangePassword/ChangePassword';
 
 export const routesConfig = [
   {
@@ -69,6 +70,14 @@ export const routesConfig = [
   {
     path: PATH_NAME.LOGIN,
     element: <Login />,
+  },
+  {
+    path: PATH_NAME.FORGOT,
+    element: <Forgot />,
+  },
+  {
+    path: PATH_NAME.CHANGE_PASSWORD,
+    element: <ChangePassword />,
   },
   {
     path: PATH_NAME.LANDING,

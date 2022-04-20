@@ -106,7 +106,7 @@ export const refreshToken = (refreshToken) => async (dispatch) => {
       const { accessToken } = data;
       dispatch(refreshTokenSuccess(accessToken));
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const refreshTokenSuccess = (token) => {

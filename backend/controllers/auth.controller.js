@@ -28,7 +28,6 @@ function captcha(req, res) {
   url += "&remoteip=" + req.connection.remoteAddress;
 
   request.get(url, (err, response, body) => {
-    // console.log(body);
     if (err) {
       return res.status(401).send({ result: "fail", error: "Invalid captcha" });
     }

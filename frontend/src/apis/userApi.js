@@ -39,6 +39,23 @@ const userApi = {
     const url = `/account/update-friend-relationship?RelatingAccountId=${RelatingAccountId || ""}&RelatedAccountId=${RelatedAccountId || ""}&Type=${Type || ""}&ButtonIcon=${ButtonIcon || ""}&RelatingAccountNickname=${RelatingAccountNickname || ""}&RelatedAccountNickname=${RelatedAccountNickname || ""}&Notification=${Notification == 0 ? 0 : Notification || ""}`;
     return axiosClient.get(url);
   },
+  checkAccountExisted: (email) => {
+    const url = `/account/check-account-existed?email=${email}`;
+    return axiosClient.get(url);
+  },
+  sentEmailForgotPassword: (email) => {
+    const url = `/account/send-email-forgot-password?email=${email}`;
+    return axiosClient.get(url);
+  },
+  checkTempToken: (email, tempToken, tempCode) => {
+    const url = `/account/check-token?email=${email}&tempToken=${tempToken}&tempCode=${tempCode}`;
+    return axiosClient.get(url);
+  },
+  changePassword: (email, tempToken, tempCode, password) => {
+    const url = `/account/change-password?email=${email}&tempToken=${tempToken}&tempCode=${tempCode}&password=${password}`;
+    return axiosClient.get(url);
+  },
+
 
 };
 
