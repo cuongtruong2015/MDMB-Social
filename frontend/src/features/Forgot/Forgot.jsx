@@ -134,29 +134,33 @@ export default function Forgot() {
     if (response) {
       const data = await authApi.verifyCaptcha(response);
       if (data.result === 'success') {
-        console.log(data);
         const check = emailRegex.test(email);
         if (!check) setNotification('Email invalid');
         else {
           const res = await userApi.checkAccountExisted(email);
           if (!res.result) setNotification('Email not existed');
           else {
-            await userApi.sentEmailForgotPassword(email);
-            Swal.fire({
-              title: 'Awaiting confirmation',
-              icon: 'success',
-              html: `<div>Please Check your email spam folder, If you haven't received our email in 3 hours, please try again.</div>`,
-              preConfirm: () => {
-                navigate(
-                  '/change-password?email=fangsilver1412@gmail.com&type=pin'
-                );
-              },
-            });
+            const data = await userApi.sentEmailForgotPassword(
+              email,
+              res.token
+            );
+            if (data.result)
+              Swal.fire({
+                title: 'Awaiting confirmation',
+                icon: 'success',
+                html: `<div>Please Check your email spam folder, If you haven't received our email in 3 hours, please try again.</div>`,
+                preConfirm: () => {
+                  navigate(
+                    '/change-password?email=fangsilver1412@gmail.com&type=pin'
+                  );
+                },
+              });
+            else Swal.fire({ title: 'Error', icon: 'error' });
           }
         }
       }
-      refRecapCha.current?.reset();
     } else setNotification('Please verify captcha');
+    refRecapCha.current?.reset();
   };
   const onSubmitClick = () => {
     handleCheckEmail();

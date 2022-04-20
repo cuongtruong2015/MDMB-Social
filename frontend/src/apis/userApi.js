@@ -43,8 +43,8 @@ const userApi = {
     const url = `/account/check-account-existed?email=${email}`;
     return axiosClient.get(url);
   },
-  sentEmailForgotPassword: (email) => {
-    const url = `/account/send-email-forgot-password?email=${email}`;
+  sentEmailForgotPassword: (email, token) => {
+    const url = `/account/send-email-forgot-password?email=${email}&token=${token}`;
     return axiosClient.get(url);
   },
   checkTempToken: (email, tempToken, tempCode) => {
