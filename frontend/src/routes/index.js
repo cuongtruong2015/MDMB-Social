@@ -13,6 +13,7 @@ import UpdateProfile from 'features/UpdateProfile/UpdateProfile';
 import UserInfor from 'features/UserInfor/UserInfor';
 import Forgot from 'features/Forgot/Forgot';
 import ChangePassword from 'features/ChangePassword/ChangePassword';
+import Test from 'features/Test/Test';
 
 export const routesConfig = [
   {
@@ -86,6 +87,10 @@ export const routesConfig = [
   {
     path: PATH_NAME.ERROR_404,
     element: <NotFound />,
+  },
+  {
+    path: PATH_NAME.TEST,
+    element: <Test />,
   },
 ];
 

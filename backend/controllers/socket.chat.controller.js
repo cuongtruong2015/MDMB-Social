@@ -6,7 +6,6 @@ function chat(io, socket) {
     socket.on('chat message', async (msg, type, accountId, response) => {
         let messageBeforeEncrypt = msg;
         console.log("chat message: " + msg + " to accountId: " + accountId);
-        console.log(msg);
         msg = await cryptoMiddlware.encrypt(msg);
         // console.log('encrypted msg: ' + msg);
 

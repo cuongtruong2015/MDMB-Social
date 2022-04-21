@@ -12,4 +12,5 @@ export const PATH_NAME = {
   USER_INFOR: 'userinfor/:id',
   CONTACT: 'contact',
   CHANGE_PASSWORD: 'change-password',
+  TEST: 'test',
 };

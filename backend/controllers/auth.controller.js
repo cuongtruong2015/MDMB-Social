@@ -19,7 +19,7 @@ function captcha(req, res) {
   // let captcha = req.body['g-recaptcha-response'];
   // console.log(req.query);
   if (!captcha) {
-    return res.status(401).send({ error: "No captcha provided" });
+    return res.status(201).send({ error: "No captcha provided" });
   }
 
   let url = "https://www.google.com/recaptcha/api/siteverify";
@@ -29,13 +29,13 @@ function captcha(req, res) {
 
   request.get(url, (err, response, body) => {
     if (err) {
-      return res.status(401).send({ result: "fail", error: "Invalid captcha" });
+      return res.status(201).send({ result: "fail", error: "Invalid captcha" });
     }
 
     let result = JSON.parse(body);
     // console.log(result);
     if (!result.success) {
-      return res.status(401).send({ result: "fail", error: result["error-codes"][0] });
+      return res.status(201).send({ result: "fail", error: result["error-codes"][0] });
     }
     res.status(200).send({
       result: "success",
