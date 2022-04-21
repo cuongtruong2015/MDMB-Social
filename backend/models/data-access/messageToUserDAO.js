@@ -57,23 +57,37 @@ function getOlderMessage(fromAccount, toAccount, messageId, Callback) {
     });
 }
 
+// function addMessage(fromAccount, toAccount, content, type, Callback) {
+//     connection.pool.getConnection(function (err, con) {
+//         if (err) throw err;
+//         var sql = `insert into MDMB.MessageToUser(FromAccount, ToAccount, Content, Type) values(?,?,?,?);`;
+//         con.query(sql, [fromAccount, toAccount, content, type],
+//             function (err, result) {
+//                 con.release();
+//                 if (err) {
+//                     console.log(err);
+//                     return Callback(false);
+//                 }
+//                 else return Callback(true, result.insertId);
+//             });
+//     });
+// }
+
 function addMessage(fromAccount, toAccount, content, type, Callback) {
-    // var con = connection.createConnection();
-    // con.connect(async function (err) {
-    connection.pool.getConnection(function (err, con) {
-        if (err) throw err;
-        // await connection.setTimeZone(con);
-        var sql = `insert into MDMB.MessageToUser(FromAccount, ToAccount, Content, Type) values(?,?,?,?);`;
-        con.query(sql, [fromAccount, toAccount, content, type],
-            function (err, result) {
-                // connection.closeConnection(con);
-                con.release();
-                if (err) {
-                    console.log(err);
-                    return Callback(false);
-                }
-                else return Callback(true, result.insertId);
-            });
+    var sql = `insert into MDMB.MessageToUser(FromAccount, ToAccount, Content, Type) values(?,?,?,?);`;
+    return new Promise((resolve, reject) => {
+        connection.pool.getConnection(function (err, con) {
+            if (err) throw err;
+            con.query(sql, [fromAccount, toAccount, content, type],
+                function (err, result) {
+                    con.release();
+                    if (err) {
+                        console.log(err);
+                        return resolve(false);
+                    }
+                    else return resolve({ rs: true, messageId: result.insertId });
+                });
+        });
     });
 }
 
@@ -221,6 +235,46 @@ function getMoreFiles(accountId, friendId, messageId, Callback) {
             });
     });
 }
+function addMusicCommandYoutube(fromAccount, toAccount, content, type, BonusData) {
+    var sql = `insert into MDMB.MessageToUser(FromAccount, ToAccount, Content, Type, BonusData) values(?,?,?,?,?);`;
+    return new Promise((resolve, reject) => {
+        connection.pool.getConnection(function (err, con) {
+            if (err) throw err;
+            con.query(sql, [fromAccount, toAccount, content, type, BonusData],
+                function (err, result) {
+                    con.release();
+                    if (err) {
+                        console.log(err);
+                        return resolve(false);
+                    }
+                    else return resolve({ rs: true, messageId: result.insertId });
+                });
+        });
+    });
+}
+function FoundLastedPlayList(AccountId, FriendId) {
+    var sql = `SELECT * FROM MDMB.MessageToUser 
+    where Type=5 and 
+    ((FromAccount=? and ToAccount = ?) or (FromAccount=? and ToAccount = ?)) 
+    and BonusData is not null 
+    order by MessageId desc 
+    limit 1;`;
+    return new Promise((resolve, reject) => {
+        connection.pool.getConnection(function (err, con) {
+            if (err) throw err;
+            con.query(sql, [AccountId, FriendId, FriendId, AccountId],
+                function (err, result) {
+                    con.release();
+                    if (err) {
+                        console.log(err);
+                        return resolve(false);
+                    }
+                    if (result.length === 0) resolve(false)
+                    else resolve(result[0].BonusData);
+                });
+        });
+    });
+}
 module.exports = {
     getOldMessage,
     getOlderMessage,
@@ -231,5 +285,7 @@ module.exports = {
     getFiles,
     getTop1000Message,
     getMoreImageAndVideo,
-    getMoreFiles
+    getMoreFiles,
+    addMusicCommandYoutube,
+    FoundLastedPlayList,
 }

@@ -189,12 +189,19 @@ function ChatOverView() {
   };
 
   const handleSendMessage = (message, type) => {
-    socket?.emit('chat message', message, type, roomId, (status, data) => {
-      if (status === 'ok' && +data.ToAccount === +roomId) {
-        dispatch(sendMessage(data));
-        dispatch(updateListConversationWithSentMessage(data, 0));
+    socket?.emit(
+      'chat message',
+      message,
+      type,
+      roomId,
+      null,
+      (status, data) => {
+        if (status === 'ok' && +data.ToAccount === +roomId) {
+          dispatch(sendMessage(data));
+          dispatch(updateListConversationWithSentMessage(data, 0));
+        }
       }
-    });
+    );
   };
 
   const handleSelectRoomClick = (conversation) => {

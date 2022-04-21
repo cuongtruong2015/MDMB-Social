@@ -34,7 +34,7 @@ export function ChangeNickname(dispatch, socket, Swal, user, Nickname, yourInfor
             if ((yourNickname ? yourNickname : yourInfor?.Name) === yourNicknameSet && (Nickname ? Nickname : user?.Name) === partnerNickname) return;
             if (!((yourNickname ? yourNickname : yourInfor?.Name) === yourNicknameSet)) {
                 let message = yourNicknameSet === "" ? yourInfor?.Name + "'s Nickname has removed " : yourInfor?.Name + "'s Nickname has changed to " + yourNicknameSet;
-                socket?.emit('chat message', message, 4, user?.AccountId, (status, data) => {
+                socket?.emit('chat message', message, 4, user?.AccountId, null, (status, data) => {
                     if (status === 'ok' && +data.ToAccount === user?.AccountId) {
                         dispatch(sendMessage(data));
                         dispatch(updateListConversationWithSentMessage(data, 4));
@@ -44,7 +44,7 @@ export function ChangeNickname(dispatch, socket, Swal, user, Nickname, yourInfor
             }
             if (!((Nickname ? Nickname : user?.Name) === partnerNickname)) {
                 let message = partnerNickname === "" ? user?.Name + "'s Nickname has removed " : user?.Name + "'s Nickname has changed to " + partnerNickname;
-                socket?.emit('chat message', message, 4, user?.AccountId, (status, data) => {
+                socket?.emit('chat message', message, 4, user?.AccountId, null, (status, data) => {
                     if (status === 'ok' && +data.ToAccount === user?.AccountId) {
                         dispatch(sendMessage(data));
                         dispatch(updateListConversationWithSentMessage(data, 4));
@@ -180,7 +180,7 @@ export async function changeIcon(icon, user, userApi, dispatch, socket) {
     }).then((rs) => {
         if (rs?.result) {
             let message = "Chat icon has changed to " + icon;
-            socket?.emit('chat message', message, 4, user?.AccountId, (status, data) => {
+            socket?.emit('chat message', message, 4, user?.AccountId, null, (status, data) => {
                 if (status === 'ok' && +data.ToAccount === user?.AccountId) {
                     dispatch(sendMessage(data));
                     dispatch(updateListConversationWithSentMessage(data, 4));
@@ -205,7 +205,7 @@ export async function removeButtonIcon(icon, user, userApi, dispatch, socket) {
     }).then((rs) => {
         if (rs?.result) {
             let message = "Chat icon has removed";
-            socket?.emit('chat message', message, 4, user?.AccountId, (status, data) => {
+            socket?.emit('chat message', message, 4, user?.AccountId, null, (status, data) => {
                 if (status === 'ok' && +data.ToAccount === user?.AccountId) {
                     dispatch(sendMessage(data));
                     dispatch(updateListConversationWithSentMessage(data, 4));

@@ -229,24 +229,24 @@ function CardMessage(props) {
                       >
                         <video className="video" src={content} alt=""></video>
                       </ImageMessageWrapper>
-                    ) : (
-                      type === 3 && (
-                        <FileMessageWrapper
-                          onClick={() => (window.location.href = content)}
-                        >
-                          <FileIcon owner={owner} />
-                          <NameFile>
-                            {decodeURIComponent(
-                              ''.concat(
-                                content?.substring(
-                                  content?.indexOf('%2F') + 3,
-                                  content?.indexOf('?')
-                                )
+                    ) : type === 3 ? (
+                      <FileMessageWrapper
+                        onClick={() => (window.location.href = content)}
+                      >
+                        <FileIcon owner={owner} />
+                        <NameFile>
+                          {decodeURIComponent(
+                            ''.concat(
+                              content?.substring(
+                                content?.indexOf('%2F') + 3,
+                                content?.indexOf('?')
                               )
-                            )}
-                          </NameFile>
-                        </FileMessageWrapper>
-                      )
+                            )
+                          )}
+                        </NameFile>
+                      </FileMessageWrapper>
+                    ) : (
+                      type === 5 && content
                     )}
                   </Message>
                 </WrapperMessage>

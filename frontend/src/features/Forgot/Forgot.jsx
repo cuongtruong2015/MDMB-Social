@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const Wrapper = styled.div`
-  width: 100vư;
+  width: 100vw;
   height: 100vh;
   padding: 0;
 `;

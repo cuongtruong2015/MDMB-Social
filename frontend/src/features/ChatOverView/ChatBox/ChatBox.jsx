@@ -7,13 +7,18 @@ import { NimblePicker } from 'emoji-mart';
 import data from 'emoji-mart/data/google.json';
 import React from 'react';
 import { Col, Row } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { HoverMixin } from 'styles/mixinStyles';
 import { X, PlayCircle } from '@styled-icons/boxicons-regular';
 import { checkFileSize, uploadFile } from 'components/FileStore/FileStore';
 import { getListRelationshipSelector } from 'app/selectors/listRelationship';
+import {
+  playLastVideoListSearched,
+  searchYoutubeData,
+} from './playYoutubeMusic';
+import { getSocket } from 'app/selectors/socket';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -225,6 +230,8 @@ function ChatBox({
   listFile,
   onSendFiles,
 }) {
+  const dispatch = useDispatch();
+  const socket = useSelector(getSocket);
   const [message, setMessage] = React.useState('');
   const typingTimeoutRef = React.useRef(null);
   const [showPicker, setShowPicker] = React.useState(false);
@@ -261,6 +268,17 @@ function ChatBox({
   };
   const onSendClick = async (e) => {
     e.preventDefault();
+    if (/^!!play [1-5]/.test(message)) {
+      await playLastVideoListSearched(message, roomId, socket, dispatch);
+      setMessage('');
+      return;
+    }
+    if (/!!play /.test(message)) {
+      await searchYoutubeData(message, roomId, socket, dispatch);
+      setMessage('');
+      return;
+    }
+
     if ((!message || message.trim().length === 0) && !files[0]) return;
     if (message.length > 1000) onSendMessage(message.slice(0, 1000), 0);
     else onSendMessage(message, 0);
