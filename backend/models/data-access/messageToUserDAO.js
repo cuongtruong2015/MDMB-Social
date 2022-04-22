@@ -252,7 +252,7 @@ function addMusicCommandYoutube(fromAccount, toAccount, content, type, BonusData
         });
     });
 }
-function FoundLastedPlayList(AccountId, FriendId) {
+function FindLastedPlayList(AccountId, FriendId) {
     var sql = `SELECT * FROM MDMB.MessageToUser 
     where Type=5 and 
     ((FromAccount=? and ToAccount = ?) or (FromAccount=? and ToAccount = ?)) 
@@ -287,5 +287,5 @@ module.exports = {
     getMoreImageAndVideo,
     getMoreFiles,
     addMusicCommandYoutube,
-    FoundLastedPlayList,
+    FindLastedPlayList,
 }

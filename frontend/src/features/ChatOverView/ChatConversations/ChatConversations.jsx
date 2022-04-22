@@ -1,5 +1,5 @@
-import { Search } from '@styled-icons/heroicons-solid';
 import { X } from '@styled-icons/boxicons-regular';
+import { Search } from '@styled-icons/heroicons-solid';
 import {
   changeFilterConversation,
   getListConversation,
@@ -10,15 +10,14 @@ import {
   getConversationsBySearch,
   getFilterName,
 } from 'app/selectors/conversations';
+import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 import { getAuth } from 'app/selectors/login';
 import CardConversation from 'features/ChatOverView/ChatConversations/CardConversation/CardConversation';
+import { useDebounce } from 'hooks';
 import React from 'react';
 import { Form, InputGroup as BsInputGroup } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { useDebounce } from 'hooks';
-import { SetNotification } from 'components/Notification/notification';
-import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 
 const SideBar = styled.div`
   width: 100%;

@@ -12,9 +12,7 @@ export default function Test() {
   }
   const [control, setControl] = React.useState(false);
   const checkElapsedTime = (e) => {
-    // console.log(e.target);
     setControl(e.target);
-    // console.log(e.target.playerInfo.playerState);
     const duration = e.target.getDuration();
     const currentTime = e.target.getCurrentTime();
     if (currentTime / duration > 0.95) {
@@ -28,9 +26,20 @@ export default function Test() {
       autoplay: 1,
     },
   };
-  const handleClick = () => {
+  const handlePauseClick = () => {
     control.pauseVideo();
   };
+  const handleStartClick = () => {
+    console.log(control.setLoop('repeat'));
+    // control.setLoop(true);
+  };
+  const handleResumeClick = () => {
+    control.pauseVideo();
+  };
+  const handleStopClick = () => {
+    control.stopVideo();
+  };
+
   const FetchApi = async () => {
     const data = await fetch(
       'https://www.googleapis.com/youtube/v3/search?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&q=beliver'
@@ -45,8 +54,12 @@ export default function Test() {
         containerClassName="embed embed-youtube"
         onStateChange={(e) => checkElapsedTime(e)}
         opts={opts}
+        style={{ display: 'none' }}
       />
-      <button onClick={handleClick}>aaaaaaaaa</button>
+      <button onClick={handleStartClick}>start</button>
+      <button onClick={handlePauseClick}>pause</button>
+      <button onClick={handleResumeClick}>resume</button>
+      <button onClick={handleStopClick}>stop</button>
       <button onClick={FetchApi}>fetch</button>
     </div>
   );

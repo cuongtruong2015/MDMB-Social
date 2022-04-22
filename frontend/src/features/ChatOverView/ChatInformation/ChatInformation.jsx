@@ -4,6 +4,7 @@ import {
   Images,
   Link,
   PlayCircle,
+  Search,
 } from '@styled-icons/boxicons-regular';
 import {
   BellOff,
@@ -85,6 +86,7 @@ const FeatuterWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 40%;
 `;
 const FeatureIconCss = css`
   width: 2.5rem;
@@ -114,6 +116,10 @@ const IconNotificationOff = styled(BellOff)`
 const IconNotificationOn = styled(BellRing)`
   ${FeatureIconCss};
 `;
+const SearchIcon = styled(Search)`
+  ${FeatureIconCss};
+`;
+
 const CustomFeatureWrapper = styled.div`
   width: 100%;
   margin-top: 2%;
@@ -257,7 +263,6 @@ const BackArowIcon = styled(ArrowBack)`
     filter: brightness(0.8);
   }
 `;
-
 export default function ChatInformation({
   partnerId,
   userInfo,
@@ -375,6 +380,16 @@ export default function ChatInformation({
     dispatch(removeMoreLink());
   }, [partnerId]);
   // Media, Files, Link end
+  const handleSearchClick = () => {
+    Swal.fire({
+      title: 'Search',
+      input: 'text',
+      showConfirmButton: true,
+      preConfirm: (value) => {
+        console.log(value);
+      },
+    });
+  };
   return (
     <>
       {showMedia || showFiles || showLink ? (
@@ -464,6 +479,10 @@ export default function ChatInformation({
                 )}
               </div>
               <FeatureName>{notification ? 'Turn off' : 'Turn on'}</FeatureName>
+            </FeatuterWrapper>
+            <FeatuterWrapper>
+              <SearchIcon onClick={handleSearchClick} />
+              <FeatureName>Search</FeatureName>
             </FeatuterWrapper>
           </Featuter>
           <CustomFeatureWrapper show={showCustomizeChat}>

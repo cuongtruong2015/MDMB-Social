@@ -5,13 +5,22 @@ import { getPartner } from 'app/selectors/chat';
 import { ReactComponent as StickerTest } from 'assets/images/icons/sticker.svg';
 import { NimblePicker } from 'emoji-mart';
 import data from 'emoji-mart/data/google.json';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { HoverMixin } from 'styles/mixinStyles';
-import { X, PlayCircle } from '@styled-icons/boxicons-regular';
+import {
+  X,
+  PlayCircle,
+  Play,
+  Pause,
+  VolumeMute,
+  Stop,
+  VolumeFull,
+  Infinite,
+} from '@styled-icons/boxicons-regular';
 import { checkFileSize, uploadFile } from 'components/FileStore/FileStore';
 import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 import {
@@ -19,6 +28,7 @@ import {
   searchYoutubeData,
 } from './playYoutubeMusic';
 import { getSocket } from 'app/selectors/socket';
+import YouTube from 'react-youtube';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -222,13 +232,107 @@ const WrapperDialog = styled.div`
 const InputHolder = styled.input`
   display: none;
 `;
+const YoutubeWrapper = styled.div`
+  position: fixed;
+  left: 50%;
+  top: -200px;
+  z-index: 10;
+  width: 300px;
+  padding: 5px;
+  &:hover {
+    opacity: 1;
+  }
 
+  img {
+    width: 50px;
+    height: 50px;
+    margin-left: 125px;
+    border-radius: 50%;
+    animation: rotating 7s linear;
+    animation-iteration-count: infinite;
+    animation-delay: 0ms;
+    @keyframes rotating {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+  transition: 1s all;
+  ${({ showVideoPlayer }) => (showVideoPlayer ? 'top: 0px;' : '')}
+`;
+const YoutubeRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+const YoutubePlayer = styled(YouTube)`
+  display: none;
+`;
+const IconYoutube = css`
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+`;
+const PlayIcon = styled(Play)`
+  ${IconYoutube}
+`;
+const PauseIcon = styled(Pause)`
+  ${IconYoutube}
+`;
+const MuteIcon = styled(VolumeMute)`
+  ${IconYoutube}
+  width: 1.5rem;
+  height: 1.5rem;
+`;
+const StopIcon = styled(Stop)`
+  ${IconYoutube}
+`;
+const UnmuteIcon = styled(VolumeFull)`
+  ${IconYoutube}
+  width: 1.5rem;
+  height: 1.5rem;
+`;
+const InfiniteIcon = styled(Infinite)`
+  ${IconYoutube}
+  ${({ isLoop }) => (isLoop ? 'color: #a51085' : '')}
+`;
+const MusicAvatar = styled.div`
+  position: fixed;
+  z-index: 10;
+  top: 10px;
+  left: calc(50% + 125px);
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    animation: rotating 7s linear;
+    animation-iteration-count: infinite;
+    animation-delay: 0ms;
+    @keyframes rotating {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+  transition: 0.5s opacity;
+  /* transition-duration: 2s; */
+
+  ${({ showVideoPlayer }) => (showVideoPlayer ? 'opacity: 0;' : 'opacity: 1;')}
+`;
 function ChatBox({
   onSendMessage,
   onTyping,
   WindowEmpty,
   listFile,
   onSendFiles,
+  messageReceived,
 }) {
   const dispatch = useDispatch();
   const socket = useSelector(getSocket);
@@ -266,19 +370,59 @@ function ChatBox({
       }
     }, 1000);
   };
+  // useEffect(async () => {
+  //   let message = messageReceived.Content;
+  //   if (/^!!play [1-5]/.test(message)) {
+  //     const videoId = await playLastVideoListSearched(
+  //       YourAccountId,
+  //       message,
+  //       roomId,
+  //       socket,
+  //       dispatch,
+  //       1
+  //     );
+  //     setIsPlaying(true);
+  //     setIdVideoYoutube(videoId);
+  //     return;
+  //   }
+  //   if (/^!!pause/.test(message)) handlePauseClick();
+  //   else if (/^!!play/.test(message)) handlePlayClick();
+  //   else if (/^!!mute/.test(message)) handleUnmuteIconClick();
+  //   else if (/^!!unmute/.test(message)) handleMuteIconClick();
+  //   else if (/^!!stop/.test(message)) StopClick();
+  // }, [messageReceived]);
   const onSendClick = async (e) => {
     e.preventDefault();
     if (/^!!play [1-5]/.test(message)) {
-      await playLastVideoListSearched(message, roomId, socket, dispatch);
+      const videoId = await playLastVideoListSearched(
+        YourAccountId,
+        message,
+        roomId,
+        socket,
+        dispatch
+      );
+      const rs = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&id=${videoId}&part=snippet`
+      );
+      const data = await rs.json();
+      setvideoAvatar(data.items[0].snippet.thumbnails.default.url);
+      setIsPlaying(true);
+      setIdVideoYoutube(videoId);
       setMessage('');
       return;
     }
-    if (/!!play /.test(message)) {
+    if (/^!!play /.test(message)) {
       await searchYoutubeData(message, roomId, socket, dispatch);
       setMessage('');
       return;
     }
-
+    if (isPlaying) {
+      if (/^!!pause/.test(message)) handlePauseClick(1);
+      else if (/^!!play/.test(message)) handlePlayClick(1);
+      else if (/^!!mute/.test(message)) handleUnmuteIconClick(1);
+      else if (/^!!unmute/.test(message)) handleMuteIconClick(1);
+      else if (/^!!stop/.test(message)) StopClick(1);
+    }
     if ((!message || message.trim().length === 0) && !files[0]) return;
     if (message.length > 1000) onSendMessage(message.slice(0, 1000), 0);
     else onSendMessage(message, 0);
@@ -338,17 +482,111 @@ function ChatBox({
     (item) =>
       item.RelatedAccountId == roomId || item.RelatingAccountId == roomId
   )[0];
+  const YourAccountId =
+    user?.AccountId === user?.RelatedAccountId
+      ? user?.RelatingAccountId
+      : user?.RelatedAccountId;
   var buttonIcon;
   if (files.length > 0) buttonIcon = false;
   else buttonIcon = user?.ButtonIcon;
   const handleOnIconSendButton = () => {
     onSendMessage(user?.ButtonIcon, 0);
   };
-  //
-
-  // console.log((files[0]?.size / 1024 / 1024).toFixed(2));
+  // Playing youtube music
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [isPause, setIsPause] = React.useState(false);
+  const [idVideoYoutube, setIdVideoYoutube] = React.useState('');
+  const [control, setControl] = React.useState(false);
+  const [isMute, setIsMute] = React.useState(false);
+  const [isLoop, setIsLoop] = React.useState(false);
+  const [videoAvatar, setvideoAvatar] = React.useState('');
+  const checkElapsedTime = (e) => {
+    setControl(e.target);
+    document.getElementById('volumeVideoYoutube').value = e.target.getVolume();
+  };
+  const StopClick = (value) => {
+    setIsPlaying(false);
+    setIdVideoYoutube('');
+    control.stopVideo();
+    setIsMute(false);
+    if (!(value === 1)) onSendMessage('!!stop', 0);
+  };
+  const handlePauseClick = (value) => {
+    control.pauseVideo();
+    setIsPause(true);
+    console.log(value);
+    if (!(value === 1)) onSendMessage('!!pause', 0);
+  };
+  const handlePlayClick = (value) => {
+    control.playVideo();
+    setIsPause(false);
+    if (!(value === 1)) onSendMessage('!!play', 0);
+  };
+  const handleUnmuteIconClick = (value) => {
+    control.mute();
+    setIsMute(true);
+    if (!(value === 1)) onSendMessage('!!mute', 0);
+  };
+  const handleMuteIconClick = (value) => {
+    control.unMute();
+    setIsMute(false);
+    if (!(value === 1)) onSendMessage('!!unmute', 0);
+  };
+  const handleLoopIconClick = () => {
+    setIsLoop(!isLoop);
+  };
+  //end playing music
+  const [showVideoPlayer, setShowVideoPlayer] = React.useState(false);
+  document.onmousemove = handleMouseMove;
+  function handleMouseMove(event) {
+    if (event.y < 120) setShowVideoPlayer(true);
+    else setShowVideoPlayer(false);
+  }
   return (
     <Wrapper WindowEmpty={WindowEmpty}>
+      {isPlaying && idVideoYoutube && (
+        <>
+          <MusicAvatar showVideoPlayer={showVideoPlayer}>
+            <img src={videoAvatar} />
+          </MusicAvatar>
+          <YoutubeWrapper showVideoPlayer={showVideoPlayer}>
+            <img src={videoAvatar} />
+            <YoutubePlayer
+              id="video1"
+              videoId={idVideoYoutube}
+              containerClassName="embed embed-youtube"
+              onStateChange={(e) => checkElapsedTime(e)}
+              opts={{ playerVars: { autoplay: 1 } }}
+            />
+
+            <YoutubeRow>
+              <input
+                id="volumeVideoYoutube"
+                type="range"
+                min="0"
+                max="100"
+                onChange={(e) => {
+                  control.setVolume(e.target.value);
+                }}
+              />
+              {!isMute ? (
+                <UnmuteIcon onClick={handleUnmuteIconClick} />
+              ) : (
+                <MuteIcon onClick={handleMuteIconClick} />
+              )}
+            </YoutubeRow>
+            <YoutubeRow>
+              {isPause ? (
+                <PlayIcon onClick={handlePlayClick} />
+              ) : (
+                <PauseIcon onClick={handlePauseClick} />
+              )}
+              <StopIcon onClick={StopClick} />
+              <InfiniteIcon isLoop={isLoop} onClick={handleLoopIconClick} />
+            </YoutubeRow>
+          </YoutubeWrapper>
+        </>
+      )}
       <div>
         {files[0] && (
           <FileWrapper>

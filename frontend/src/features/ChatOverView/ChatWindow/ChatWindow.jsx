@@ -1,7 +1,7 @@
 import ChatInput from 'features/ChatOverView/ChatBox/ChatBox';
 import ChatHeader from 'features/ChatOverView/ChatHeader/ChatHeader';
 import WindowContent from 'features/ChatOverView/ChatWindow/WindowContent/WindowContent';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -41,6 +41,7 @@ function ChatWindow({
   onSendFiles,
   onClickChatInfor,
   showMediaOverlay,
+  messageReceived,
 }) {
   const { roomId } = useParams();
   const [hasFileInput, setHasFileInput] = React.useState(false);
@@ -71,6 +72,7 @@ function ChatWindow({
             WindowEmpty={roomId ? false : true}
             listFile={listFile}
             onSendFiles={onSendFiles}
+            messageReceived={messageReceived}
           />
         </ColBS>
       </RowBS>

@@ -213,6 +213,39 @@ function getMoreLinks(req, res) {
         }
     });
 }
+async function getLastedPlaylist(req, res) {
+    let accountId = req.query.accountId;
+    let friendId = req.query.friendId;
+    const data = await messageToUserDAO.FindLastedPlayList(accountId, friendId);
+    if (data) {
+        const Playlist = data.split(',');
+        return res.status(200).json(Playlist);
+    }
+    else
+        return res.status(200).json([]);
+}
+async function searchMessage(req, res) {
+    var accountId = req.query.accountId;
+    var friendId = req.query.friendId;
+    var search = req.query.search;
+    var listSearchMessage = [];
+    messageToUserDAO.getTop1000Message(accountId, friendId, async (listMessage) => {
+        if (listMessage) {
+            await listMessage.forEach(async message => {
+                try {
+                    message.Content = await cryptoMiddlware.decrypt(message.Content);
+                    if (message.Content.includes(search))
+                        listSearchMessage.push(message);
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+            res.status(200).json(listMessage);
+        } else {
+            res.status(200).json([]);
+        }
+    });
+}
 module.exports = {
     getOldMessage,
     getOlderMessage,
@@ -223,5 +256,7 @@ module.exports = {
     getMoreImageAndVideo,
     getMoreFiles,
     getMoreLinks,
+    getLastedPlaylist,
+    searchMessage
     // getChatList
 };

@@ -301,7 +301,7 @@ function Login() {
                     </GoogleLogin>
                   </div>
 
-                  <div
+                  {/* <div
                     className="img__border"
                     style={{
                       position: 'relative',
@@ -330,7 +330,7 @@ function Login() {
                       onClick={componentClicked}
                       callback={responseFacebook}
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

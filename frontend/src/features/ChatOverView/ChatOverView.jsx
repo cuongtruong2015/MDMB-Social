@@ -174,12 +174,13 @@ function ChatOverView() {
         }
       }
       dispatch(updateListConversationWithNewMessage(data));
+      setMessageReceived(data);
     });
     return () => {
       socket?.off('chat message');
     };
   }, [roomId, socket]);
-
+  const [messageReceived, setMessageReceived] = React.useState('');
   const handleTyping = ({ isTyping, partnerId }) => {
     if (isTyping) {
       socket?.emit('typing', partnerId);
@@ -326,6 +327,7 @@ function ChatOverView() {
                   onSendFiles={handleSendFiles}
                   onClickChatInfor={handleClickChatInfor}
                   showMediaOverlay={showMediaOverlay}
+                  messageReceived={messageReceived}
                 />
               ) : (
                 <WindowEmpty />
