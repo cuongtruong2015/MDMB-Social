@@ -91,7 +91,7 @@ const Avatar = styled.div`
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    object-fit: fill;
+    object-fit: cover;
     @media (max-width: 1250px) {
       width: 80px;
       height: 80px;
@@ -109,12 +109,12 @@ const Name = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
+  text-align: center;
   @media (max-width: 1250px) {
     font-size: 1.2rem;
   }
   @media (max-width: 680px) {
-    font-size: 0.9rem;
+    font-size: 0.7rem;
   }
 `;
 const Description = styled.div`
@@ -176,11 +176,19 @@ const AcceptButton = styled(ButtonBS)`
     font-size: 0.8rem;
     padding: 0.3rem;
   }
+  @media (max-width: 680px) {
+    font-size: 0.6em;
+    padding: 0.1rem 0.05rem 0.1rem 0.05rem;
+  }
 `;
 const RemoveButton = styled(ButtonBS)`
   @media (max-width: 1250px) {
     font-size: 0.8rem;
     padding: 0.3rem;
+  }
+  @media (max-width: 680px) {
+    font-size: 0.6em;
+    padding: 0.1rem 0.05rem 0.1rem 0.05rem;
   }
 `;
 const TopFriendRequest = styled.div`
@@ -242,7 +250,8 @@ export default function RightSide() {
   const socket = useSelector(getSocket);
   var notificationChat = 0;
   listConversation.forEach((item) => {
-    if (item.UnseenMessage != null) notificationChat += (item.UnseenMessage>0?1:0);
+    if (item.UnseenMessage != null)
+      notificationChat += item.UnseenMessage > 0 ? 1 : 0;
   });
   var audio = new Audio(messageAudio);
   React.useEffect(() => {
@@ -255,12 +264,16 @@ export default function RightSide() {
     };
   }, [socket]);
   React.useEffect(() => {
-      dispatch(getNotificationCount(notificationChat, newListRelationship.length));
+    dispatch(
+      getNotificationCount(notificationChat, newListRelationship.length)
+    );
   }, [notificationChat]);
   return (
     <RightSideWrapper>
       <Header>Friend you may know...</Header>
-      {newListRelationship?.length > 0 && <Title>Friend Requests</Title>}
+      {newListRelationship?.length > 0 && (
+        <Title>Friend Requests({newListRelationship.length})</Title>
+      )}
       <TopFriendRequest>
         <RowBS>
           {newListRelationship.map((item, index) => (

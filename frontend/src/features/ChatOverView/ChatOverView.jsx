@@ -72,12 +72,27 @@ const ColBS2 = styled(Col)`
   width: ${({ showinforright }) =>
     showinforright ? 'calc(50% - 80px)' : 'calc(75% - 80px)'};
   transition: all 0.3s;
+
+  @media (max-width: 800px) {
+    width: ${({ showinforright }) =>
+      showinforright ? 'calc( 100% - 380px)' : 'calc(100% - 80px)'};
+  }
+  @media (max-width: 600px) {
+    ${({ inChatWindow }) => inChatWindow && `width:100% ;`}
+  }
+  @media (max-width: 420px) {
+    ${({ inChatWindow, showinforright }) =>
+      inChatWindow && showinforright && `display:none; ;`}
+  }
 `;
 const LeftBar = styled(Col)`
   padding-left: 0;
   padding-right: 0;
   width: 80px;
   background-color: #efeff3;
+  @media (max-width: 600px) {
+    ${({ inChatWindow }) => inChatWindow && `display: none`}
+  }
 `;
 const ColBS3 = styled(Col)`
   padding-left: 0;
@@ -260,6 +275,7 @@ function ChatOverView() {
         file.downloadURL,
         Type,
         roomId,
+        null,
         (status, data) => {
           if (status === 'ok' && +data.ToAccount === +roomId) {
             dispatch(sendMessage(data));
@@ -304,7 +320,7 @@ function ChatOverView() {
           />
         ) : (
           <>
-            <LeftBar lg={1} xs={1} md={1}>
+            <LeftBar lg={1} xs={1} md={1} inChatWindow={roomId ? 1 : 0}>
               <Sidebar MessageActive={true} />
             </LeftBar>
             <ColBS1 lg={3} xs={3} md={3} active={roomId ? 1 : 0}>
@@ -316,6 +332,7 @@ function ChatOverView() {
               md={8}
               active={roomId ? 1 : 0}
               showinforright={showInforRight ? 1 : 0}
+              inChatWindow={roomId ? 1 : 0}
             >
               {roomId ? (
                 <ChatWindow

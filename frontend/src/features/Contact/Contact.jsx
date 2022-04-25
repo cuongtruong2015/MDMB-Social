@@ -56,7 +56,7 @@ const RightSideWrapper = styled.div`
 
 export default function Contact() {
   //notification
-  
+
   //end notification
   return (
     <Wrapper fluid>

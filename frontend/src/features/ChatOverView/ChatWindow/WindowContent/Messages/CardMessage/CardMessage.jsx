@@ -157,6 +157,34 @@ const NicknameChanged = styled.div`
   font-size: 0.8rem;
   filter: opacity(0.5);
 `;
+const WeatherHeader = styled.div`
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+`;
+const WeatherContentWrapper = styled.div`
+  margin-left: 10px;
+`;
+const WeatherDate = styled.div`
+  font-size: 1rem;
+  font-weight: bold;
+`;
+const WeatherStatusWrapper = styled.div`
+  margin-left: 10px;
+`;
+const WeatherStatus = styled.div`
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-left: 5px;
+`;
+const WeatherDetailWrapper = styled.div`
+  margin-left: 10px;
+`;
+const IconWeather = styled.span`
+  img {
+    width: 2rem;
+    height: 2rem;
+  }
+`;
 function CardMessage(props) {
   const {
     name,
@@ -191,6 +219,8 @@ function CardMessage(props) {
     var url = content.match(regexContainLink)?.[0];
     // isLink = pattern.test(url);
   }
+  var weatherData;
+  if (type === 8) weatherData = JSON.parse(content);
   return (
     <Wrapper owner={owner ? 1 : 0}>
       {type === 4 ? (
@@ -245,8 +275,42 @@ function CardMessage(props) {
                           )}
                         </NameFile>
                       </FileMessageWrapper>
+                    ) : type === 5 ? (
+                      content
                     ) : (
-                      type === 5 && content
+                      type === 8 && (
+                        <>
+                          <WeatherHeader>
+                            Weather for next few days
+                          </WeatherHeader>
+                          {weatherData?.map((item, index) => (
+                            <WeatherContentWrapper key={index}>
+                              <WeatherDate>
+                                - {item?.date?.trim()} : {item?.weather}
+                              </WeatherDate>
+                              {item?.status?.status?.map((i, indx) => (
+                                <WeatherStatusWrapper key={indx}>
+                                  <WeatherStatus>
+                                    {i.time.split(' ')[0]}:
+                                  </WeatherStatus>
+                                  <WeatherDetailWrapper>
+                                    {'Temp/Feels like:  '}
+                                    {i.temp}°C/{i.feellike}°C
+                                  </WeatherDetailWrapper>
+                                  <WeatherDetailWrapper>
+                                    {'humidity :  '}
+                                    {i.humidity}%
+                                  </WeatherDetailWrapper>
+                                  <WeatherDetailWrapper>
+                                    {'UV concentration :  '}
+                                    {i.uv}
+                                  </WeatherDetailWrapper>
+                                </WeatherStatusWrapper>
+                              ))}
+                            </WeatherContentWrapper>
+                          ))}
+                        </>
+                      )
                     )}
                   </Message>
                 </WrapperMessage>

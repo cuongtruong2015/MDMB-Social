@@ -4,7 +4,7 @@ const cryptoMiddlware = require('../middlewares/crypto.middleware');
 
 function chat(io, socket) {
     socket.on('chat message', async (msg, type, accountId, bonusData, response) => {
-        console.log(bonusData)
+        if (!msg) return
         let messageBeforeEncrypt = msg;
         console.log("chat message: " + msg + " to accountId: " + accountId);
         msg = await cryptoMiddlware.encrypt(msg);

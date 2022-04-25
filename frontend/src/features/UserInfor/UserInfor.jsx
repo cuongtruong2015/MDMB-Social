@@ -1,7 +1,7 @@
 import {
   FemaleSign,
   Male as MaleFemale,
-  MaleSign
+  MaleSign,
 } from '@styled-icons/boxicons-regular';
 import { User, UserCheck, UserPlus, UserX } from '@styled-icons/boxicons-solid';
 import { Cake, Chat, Rss } from '@styled-icons/heroicons-solid';
@@ -12,7 +12,7 @@ import { getListRelationshipSelector } from 'app/selectors/listRelationship';
 import { getAuth } from 'app/selectors/login';
 import {
   getPartnerProfileSelector,
-  isFetchingPartnerProfile
+  isFetchingPartnerProfile,
 } from 'app/selectors/partnerProfile';
 import { getUserProfileSelector } from 'app/selectors/userProfile';
 import dayjs from 'dayjs';
@@ -22,7 +22,7 @@ import React, { useEffect } from 'react';
 import {
   Button,
   Container as BootstrapContainer,
-  Dropdown
+  Dropdown,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -81,6 +81,7 @@ const ButtonDefault = styled(Button)`
     color: #000000;
   }
 `;
+
 const IntroduceHeader = styled.div`
   font-weight: bold;
   text-align: left;
@@ -175,13 +176,13 @@ function UserInfor() {
   const navigate = useNavigate();
   const { id } = useParams();
   var AccountId = useSelector(getAuth)?.accountId;
-  
+
   const isFetching = useSelector(isFetchingPartnerProfile);
 
   useEffect(() => {
-  if (id == AccountId) navigate('/update-profile');
-  
-  dispatch(getPartnerProfile(id));
+    if (id == AccountId) navigate('/update-profile');
+
+    dispatch(getPartnerProfile(id));
     dispatch(getUserProfile(AccountId));
     dispatch(getListRelationship(AccountId));
   }, []);
@@ -277,7 +278,7 @@ function UserInfor() {
                       </Dropdown.Menu>
                     </Dropdown>
                     <Button onClick={handleDirectMessageClick}>
-                      <ChatIcon /> Direct Message
+                      <ChatIcon /> Message
                     </Button>
                   </>
                 )}

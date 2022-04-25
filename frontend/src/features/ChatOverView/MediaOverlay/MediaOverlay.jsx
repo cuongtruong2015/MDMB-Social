@@ -2,12 +2,16 @@ import { PlayCircle, X } from '@styled-icons/boxicons-regular';
 import LogoImg from 'assets/images/logos/logo.jpg';
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from '../../../../node_modules/react-router-dom/index';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 70%;
   height: 100%;
   padding: 0;
+  @media (max-width: 420px) {
+    width: 100%;
+  }
 `;
 const Top = styled.div`
   display: flex;
@@ -78,7 +82,6 @@ const ImageWrapper = styled.div`
   max-height: 100%;
   text-align: center;
   z-index: 1;
-
   img,
   video {
     max-width: 80%;
@@ -92,6 +95,9 @@ const ImageWrapper = styled.div`
     -webkit-box-shadow: 10px 10px 5px #ccc;
     -khtml-box-shadow: 10px 10px 5px #ccc;
   }
+  @media (max-width: 420px) {
+    max-width: 100%;
+  }
 `;
 const PlayIcon = styled(PlayCircle)`
   width: 2rem;
@@ -101,12 +107,12 @@ const PlayIcon = styled(PlayCircle)`
 `;
 export default function MediaOverlay({ disableMediaOverlay, media }) {
   var video = document.getElementsByClassName('video-overlay')[0];
-
+  const navigate = useNavigate();
   return (
     <Wrapper>
       <Top>
         <Close onClick={() => disableMediaOverlay()} />
-        <Logo />
+        <Logo onClick={() => disableMediaOverlay()} />
       </Top>
       <BackgroundBlur url={media.Content} />
       {media?.Type === 2 && <OverlayEffect />}

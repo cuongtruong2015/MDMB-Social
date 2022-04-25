@@ -141,6 +141,13 @@ const NotificationCount = styled.div`
   justify-content: center;
   align-items: center;
   display: flex;
+  ${({ ContactActive }) =>
+    ContactActive
+      ? `
+      @media(max-width:800px){
+    display: none
+      }`
+      : 'flex'}
 `;
 const NotiText = styled.div`
   font-size: 0.7rem;
@@ -149,7 +156,7 @@ const NotiText = styled.div`
   margin-right: 4px;
   margin-left: 4px;
 `;
-function LefBar({ MessageActive, ContactActive }) {
+function LefBar({ MessageActive, ContactActive, inChatWindow }) {
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState(null);
   const ref = useRef(null);
@@ -200,12 +207,12 @@ function LefBar({ MessageActive, ContactActive }) {
     })`;
   else document.title = `MDMB Social`;
   return (
-    <Wrapper className="LeftBar">
+    <Wrapper className="LeftBar" inChatWindow={inChatWindow}>
       <Logo onClick={handleLogoClick} ContactActive={ContactActive} />
       <HoverWrapper>
         <MessageIcon active={MessageActive ? 1 : 0} onClick={handleChatClick} />
         {notification.chat > 0 && (
-          <NotificationCount>
+          <NotificationCount ContactActive={ContactActive}>
             <NotiText>{notification.chat}</NotiText>
           </NotificationCount>
         )}
@@ -216,7 +223,7 @@ function LefBar({ MessageActive, ContactActive }) {
           onClick={handleContactClick}
         />
         {notification.contact > 0 && (
-          <NotificationCount>
+          <NotificationCount ContactActive={ContactActive}>
             <NotiText>{notification.contact}</NotiText>
           </NotificationCount>
         )}

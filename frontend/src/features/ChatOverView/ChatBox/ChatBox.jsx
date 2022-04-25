@@ -29,6 +29,7 @@ import {
 } from './playYoutubeMusic';
 import { getSocket } from 'app/selectors/socket';
 import YouTube from 'react-youtube';
+import { getWeatherNextFewDay } from './weatherApp';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -374,29 +375,30 @@ function ChatBox({
       }
     }, 1000);
   };
-  // useEffect(async () => {
-  //   let message = messageReceived.Content;
-  //   if (/^!!play [1-5]/.test(message)) {
-  //     const videoId = await playLastVideoListSearched(
-  //       YourAccountId,
-  //       message,
-  //       roomId,
-  //       socket,
-  //       dispatch,
-  //       1
-  //     );
-  //     setIsPlaying(true);
-  //     setIdVideoYoutube(videoId);
-  //     return;
-  //   }
-  //   if (/^!!pause/.test(message)) handlePauseClick();
-  //   else if (/^!!play/.test(message)) handlePlayClick();
-  //   else if (/^!!mute/.test(message)) handleUnmuteIconClick();
-  //   else if (/^!!unmute/.test(message)) handleMuteIconClick();
-  //   else if (/^!!stop/.test(message)) StopClick();
-  // }, [messageReceived]);
+  useEffect(async () => {
+    let message = messageReceived.Content;
+    if (/^!!play [1-5]/.test(message)) {
+      const videoId = await playLastVideoListSearched(
+        YourAccountId,
+        message,
+        roomId,
+        socket,
+        dispatch,
+        1
+      );
+      setIsPlaying(true);
+      setIdVideoYoutube(videoId);
+      return;
+    }
+    if (/^!!pause/.test(message)) handlePauseClick(1);
+    else if (/^!!play/.test(message)) handlePlayClick(1);
+    else if (/^!!mute/.test(message)) handleUnmuteIconClick(1);
+    else if (/^!!unmute/.test(message)) handleMuteIconClick(1);
+    else if (/^!!stop/.test(message)) StopClick(1);
+  }, [messageReceived]);
   const onSendClick = async (e) => {
     e.preventDefault();
+
     if (/^!!play [1-5]/.test(message)) {
       const videoId = await playLastVideoListSearched(
         YourAccountId,
@@ -414,8 +416,9 @@ function ChatBox({
       setIdVideoYoutube(videoId);
       setMessage('');
       return;
-    }
-    if (/^!!play /.test(message)) {
+    } else if (/^!!weather/.test(message))
+      getWeatherNextFewDay(navigator, dispatch, socket, roomId);
+    else if (/^!!play /.test(message)) {
       await searchYoutubeData(message, roomId, socket, dispatch);
       setMessage('');
       return;
@@ -435,9 +438,7 @@ function ChatBox({
     const fileTempUpload = files;
     setFiles([]);
     const fileTemp = await uploadFile(fileTempUpload);
-    setTimeout(() => {
-      if (fileTemp) onSendFiles(fileTemp);
-    }, 1000);
+    if (fileTemp) onSendFiles(fileTemp);
     setShowPicker(false);
   };
   const onPreviewEmoji = () => {
@@ -509,6 +510,8 @@ function ChatBox({
     setControl(e.target);
     document.getElementById('volumeVideoYoutube').value = e.target.getVolume();
     setTitleMusic(e.target.getVideoData()?.title);
+    // console.log(e.target.getDuration());
+    console.log(e.target.getCurrentTime());
   };
   const StopClick = (value) => {
     setIsPlaying(false);

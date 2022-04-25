@@ -78,6 +78,9 @@ const Time = styled.p`
   text-align: right;
   width: 100%;
   padding-right: 5%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 const StatusInner = styled.div`
   display: flex;
@@ -170,7 +173,9 @@ function CardConversation({
               <Name> {nickname ? nickname : name}</Name>
               <MessageInner>
                 <Message>
-                  {Type === 3
+                  {Type === 8
+                    ? 'Weather next few days'
+                    : Type === 3
                     ? 'You have sent an attachment'
                     : lastMessage
                     ? lastMessage

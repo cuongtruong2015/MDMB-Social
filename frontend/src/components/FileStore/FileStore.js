@@ -27,7 +27,7 @@ export function checkFileSize(files, size, length) {
   })
 }
 
-export async function uploadFile(files) {
+export function uploadFile(files) {
   return new Promise((resolve, reject) => {
     if (files.length === 0) return resolve(false);
     const firebaseConfig = {
@@ -68,6 +68,7 @@ export async function uploadFile(files) {
             file.downloadURL = downloadURL;
             if (progress === files.length)
               return resolve(files);
+            console.log('send')
           });
         }
       )

@@ -58,6 +58,10 @@ const Wrapper = styled.div`
   transition: 3s all;
   height: 100vh;
   z-index: 2;
+  @media (max-width: 420px) {
+    padding: 20px;
+    ${({ showingOverlay }) => showingOverlay && 'display:none;'}
+  }
 `;
 const Avatar = styled.div`
   img {
@@ -393,7 +397,7 @@ export default function ChatInformation({
   return (
     <>
       {showMedia || showFiles || showLink ? (
-        <Wrapper>
+        <Wrapper showingOverlay={showOverlay}>
           <MediaFiles>
             <BackArowIcon onClick={handleBackClick} />
             <MediaFileHeader>
@@ -416,6 +420,7 @@ export default function ChatInformation({
               listMedia={listMedia}
               onMediaClick={onMediaClick}
               user={user}
+              showingOverlay={showOverlay}
             />
           )}
           {showFiles && <Files listFiles={listFiles} user={user} />}
