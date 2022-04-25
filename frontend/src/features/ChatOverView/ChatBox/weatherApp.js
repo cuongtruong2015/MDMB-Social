@@ -6,7 +6,7 @@ export function getWeatherNextFewDay(navigator, dispatch, socket, roomId) {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         const rs = await fetch(
-            `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily&appid=3a732a3691d14d659946b17bb1939688`
+            `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=daily&appid=${process.env.REACT_APP_OPENWEATHER_API_KEY}`
         );
         const data = await rs.json();
         // console.log(data)

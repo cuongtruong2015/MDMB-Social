@@ -4,7 +4,7 @@ import playMusicApi from "apis/playMusicApi";
 export async function searchYoutubeData(message, roomId, socket, dispatch) {
   const searchKey = message.replace('!!play', '')
   const rs = await fetch(
-    `https://www.googleapis.com/youtube/v3/search?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&q=${searchKey}&part=snippet&maxResults=5`
+    `https://www.googleapis.com/youtube/v3/search?key=${process.env.REACT_APP_YOUTOUBE}&q=${searchKey}&part=snippet&maxResults=5`
   );
   const data = await rs.json();
   const listVideo = [];
@@ -12,7 +12,7 @@ export async function searchYoutubeData(message, roomId, socket, dispatch) {
   for (let i = 0; i < data.items.length; i++) {
     listVideo.push(data.items[i].id.videoId);
     const rs2 = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&id=${data.items[i].id.videoId}&part=contentDetails&maxResults=5`
+      `https://www.googleapis.com/youtube/v3/videos?key=${process.env.REACT_APP_YOUTOUBE}&id=${data.items[i].id.videoId}&part=contentDetails&maxResults=5`
     );
     const data2 = await rs2.json()
     const duration = data2.items[0].contentDetails.duration;
