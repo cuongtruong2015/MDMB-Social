@@ -326,6 +326,10 @@ const MusicAvatar = styled.div`
 
   ${({ showVideoPlayer }) => (showVideoPlayer ? 'opacity: 0;' : 'opacity: 1;')}
 `;
+const TitleVideo = styled.div`
+  padding-top: 20px;
+  text-align: center;
+`;
 function ChatBox({
   onSendMessage,
   onTyping,
@@ -405,7 +409,7 @@ function ChatBox({
         `https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&id=${videoId}&part=snippet`
       );
       const data = await rs.json();
-      setvideoAvatar(data.items[0].snippet.thumbnails.default.url);
+      setvideoAvatar(data.items[0]?.snippet?.thumbnails?.default?.url);
       setIsPlaying(true);
       setIdVideoYoutube(videoId);
       setMessage('');
@@ -500,9 +504,11 @@ function ChatBox({
   const [isMute, setIsMute] = React.useState(false);
   const [isLoop, setIsLoop] = React.useState(false);
   const [videoAvatar, setvideoAvatar] = React.useState('');
+  const [titleMusic, setTitleMusic] = React.useState('');
   const checkElapsedTime = (e) => {
     setControl(e.target);
     document.getElementById('volumeVideoYoutube').value = e.target.getVolume();
+    setTitleMusic(e.target.getVideoData()?.title);
   };
   const StopClick = (value) => {
     setIsPlaying(false);
@@ -514,7 +520,6 @@ function ChatBox({
   const handlePauseClick = (value) => {
     control.pauseVideo();
     setIsPause(true);
-    console.log(value);
     if (!(value === 1)) onSendMessage('!!pause', 0);
   };
   const handlePlayClick = (value) => {
@@ -539,7 +544,7 @@ function ChatBox({
   const [showVideoPlayer, setShowVideoPlayer] = React.useState(false);
   document.onmousemove = handleMouseMove;
   function handleMouseMove(event) {
-    if (event.y < 120) setShowVideoPlayer(true);
+    if (event.y < 180) setShowVideoPlayer(true);
     else setShowVideoPlayer(false);
   }
   return (
@@ -551,6 +556,7 @@ function ChatBox({
           </MusicAvatar>
           <YoutubeWrapper showVideoPlayer={showVideoPlayer}>
             <img src={videoAvatar} />
+            <TitleVideo>{titleMusic}</TitleVideo>
             <YoutubePlayer
               id="video1"
               videoId={idVideoYoutube}

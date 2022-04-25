@@ -6,12 +6,20 @@ export async function searchYoutubeData(message, roomId, socket, dispatch) {
   const rs = await fetch(
     `https://www.googleapis.com/youtube/v3/search?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&q=${searchKey}&part=snippet&maxResults=5`
   );
-  const data = await rs.json()
+  const data = await rs.json();
   const listVideo = [];
   var message = 'List music found ♪♫!\n'
   for (let i = 0; i < data.items.length; i++) {
     listVideo.push(data.items[i].id.videoId);
-    message += `${i + 1}.  ${data.items[i].snippet.title} (${data.items[i]?.snippet?.publishTime?.split('T')[0]}) \n`
+    const rs2 = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD42QBJSa1Uxp_0LA3lrvS7GG0ZA8aSr2A&id=${data.items[i].id.videoId}&part=contentDetails&maxResults=5`
+    );
+    const data2 = await rs2.json()
+    const duration = data2.items[0].contentDetails.duration;
+    const time = duration.slice(2, duration.length).toLowerCase();
+
+    // message += `${i + 1}.  ${data.items[i].snippet.title} (${data.items[i]?.snippet?.publishTime?.split('T')[0]}) \n`
+    message += `${i + 1}.  ${data.items[i].snippet.title} (${time}) \n`
   }
   if (message === 'List music found ♪♫!\n') message = 'No result found, please try to search again'
   socket?.emit('chat message', message,
