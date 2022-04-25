@@ -331,6 +331,11 @@ const TitleVideo = styled.div`
   padding-top: 20px;
   text-align: center;
 `;
+const PlayMusic = styled.div`
+  @media (max-width: 420px) {
+    display: none;
+  }
+`;
 function ChatBox({
   onSendMessage,
   onTyping,
@@ -553,7 +558,7 @@ function ChatBox({
   return (
     <Wrapper WindowEmpty={WindowEmpty}>
       {isPlaying && idVideoYoutube && (
-        <>
+        <PlayMusic>
           <MusicAvatar showVideoPlayer={showVideoPlayer}>
             <img src={videoAvatar} />
           </MusicAvatar>
@@ -594,7 +599,7 @@ function ChatBox({
               <InfiniteIcon isLoop={isLoop} onClick={handleLoopIconClick} />
             </YoutubeRow>
           </YoutubeWrapper>
-        </>
+        </PlayMusic>
       )}
       <div>
         {files[0] && (
