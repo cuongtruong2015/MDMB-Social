@@ -35,7 +35,6 @@ const Wrapper = styled.div`
   height: 100%;
   width: 100%;
   visibility: ${(props) => (props.WindowEmpty ? 'hidden' : 'none')};
-  //
   display: flex;
   flex-direction: column-reverse;
   margin-top: -10px;
@@ -243,7 +242,6 @@ const YoutubeWrapper = styled.div`
   &:hover {
     opacity: 1;
   }
-
   img {
     width: 50px;
     height: 50px;
@@ -261,8 +259,33 @@ const YoutubeWrapper = styled.div`
       }
     }
   }
-  transition: 1s all;
-  ${({ showVideoPlayer }) => (showVideoPlayer ? 'top: 0px;' : '')}
+  /* transition: 1s all; */
+  ${({ showVideoPlayer }) =>
+    showVideoPlayer
+      ? 'animation: dropdown 0.5s forwards;-webkit-animation: dropdown 0.5s forwards; '
+      : 'animation: scrollUp 1.5s forwards;-webkit-animation: scrollUp 1.5s forwards;'}
+
+  /* animation: dropdown 2s forwards;
+  -webkit-animation: dropdown 1s forwards; */
+  @keyframes dropdown {
+    0% {
+      top: -200px;
+    }
+    100% {
+      top: 0px;
+    }
+  }
+  @keyframes scrollUp {
+    0% {
+      top: 0px;
+    }
+    25% {
+      top: 0px;
+    }
+    100% {
+      top: -200px;
+    }
+  }
 `;
 const YoutubeRow = styled.div`
   display: flex;
@@ -271,7 +294,7 @@ const YoutubeRow = styled.div`
   align-items: center;
 `;
 const YoutubePlayer = styled(YouTube)`
-  display: none;
+  /* display: none; */
 `;
 const IconYoutube = css`
   width: 2rem;
@@ -322,19 +345,44 @@ const MusicAvatar = styled.div`
       }
     }
   }
-  transition: 0.5s opacity;
-  /* transition-duration: 2s; */
-
-  ${({ showVideoPlayer }) => (showVideoPlayer ? 'opacity: 0;' : 'opacity: 1;')}
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  ${({ showVideoPlayer }) =>
+    !showVideoPlayer
+      ? 'animation: fadeIn 2s forwards;-webkit-animation: fadeIn 2s forwards;'
+      : 'animation: fadeOut 0.5s forwards;-webkit-animation: fadeOut 0.5s forwards;'}
 `;
 const TitleVideo = styled.div`
   padding-top: 20px;
   text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 const PlayMusic = styled.div`
   @media (max-width: 420px) {
     display: none;
   }
+`;
+const Volume = styled.input`
+  padding: 0px;
 `;
 function ChatBox({
   onSendMessage,
@@ -512,11 +560,14 @@ function ChatBox({
   const [videoAvatar, setvideoAvatar] = React.useState('');
   const [titleMusic, setTitleMusic] = React.useState('');
   const checkElapsedTime = (e) => {
-    setControl(e.target);
+    // setControl(e.target);
     document.getElementById('volumeVideoYoutube').value = e.target.getVolume();
     setTitleMusic(e.target.getVideoData()?.title);
-    // console.log(e.target.getDuration());
-    console.log(e.target.getCurrentTime());
+  };
+  const handleVideoReady = (e) => {
+    setControl(e.target);
+    e.target.playVideo();
+    // e.target.setLoop();
   };
   const StopClick = (value) => {
     setIsPlaying(false);
@@ -571,10 +622,11 @@ function ChatBox({
               containerClassName="embed embed-youtube"
               onStateChange={(e) => checkElapsedTime(e)}
               opts={{ playerVars: { autoplay: 1 } }}
+              onReady={handleVideoReady}
             />
 
             <YoutubeRow>
-              <input
+              <Volume
                 id="volumeVideoYoutube"
                 type="range"
                 min="0"

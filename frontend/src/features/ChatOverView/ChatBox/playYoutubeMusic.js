@@ -17,7 +17,7 @@ export async function searchYoutubeData(message, roomId, socket, dispatch) {
     const data2 = await rs2.json()
     const duration = data2.items[0].contentDetails.duration;
     const time = duration.slice(2, duration.length).toLowerCase();
-
+    if (!data2.items[0]) return;
     // message += `${i + 1}.  ${data.items[i].snippet.title} (${data.items[i]?.snippet?.publishTime?.split('T')[0]}) \n`
     message += `${i + 1}.  ${data.items[i].snippet.title} (${time}) \n`
   }
