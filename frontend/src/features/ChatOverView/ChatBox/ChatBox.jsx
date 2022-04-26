@@ -270,21 +270,48 @@ const YoutubeWrapper = styled.div`
   @keyframes dropdown {
     0% {
       top: -200px;
+      opacity: 0;
     }
     100% {
       top: 0px;
+      opacity: 1;
     }
   }
   @keyframes scrollUp {
     0% {
+      opacity: 1;
       top: 0px;
     }
     25% {
+      opacity: 0.8;
       top: 0px;
     }
     100% {
       top: -200px;
+      opacity: 0;
     }
+  }
+  :after {
+    content: '';
+    display: block;
+    height: 8px;
+    background: transparent;
+    background: -moz-linear-gradient(
+      top,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    ); /* FF3.6-15 */
+    background: -webkit-linear-gradient(
+      top,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    ); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(   startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
   }
 `;
 const YoutubeRow = styled.div`
@@ -294,7 +321,7 @@ const YoutubeRow = styled.div`
   align-items: center;
 `;
 const YoutubePlayer = styled(YouTube)`
-  /* display: none; */
+  display: none;
 `;
 const IconYoutube = css`
   width: 2rem;
@@ -567,7 +594,7 @@ function ChatBox({
   const handleVideoReady = (e) => {
     setControl(e.target);
     e.target.playVideo();
-    // e.target.setLoop();
+    e.target.setPlaybackRate();
   };
   const StopClick = (value) => {
     setIsPlaying(false);
