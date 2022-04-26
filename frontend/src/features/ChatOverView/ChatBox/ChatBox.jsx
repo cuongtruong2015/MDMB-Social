@@ -626,6 +626,14 @@ function ChatBox({
   const handleLoopIconClick = () => {
     setIsLoop(!isLoop);
   };
+  const onEndMusic = () => {
+    if (isLoop) control.playVideo();
+    else {
+      control.stopVideo();
+      setIsPlaying(false);
+      setIdVideoYoutube('');
+    }
+  };
   //end playing music
   const [showVideoPlayer, setShowVideoPlayer] = React.useState(false);
   document.onmousemove = handleMouseMove;
@@ -650,6 +658,7 @@ function ChatBox({
               onStateChange={(e) => checkElapsedTime(e)}
               opts={{ playerVars: { autoplay: 1 } }}
               onReady={handleVideoReady}
+              onEnd={onEndMusic}
             />
 
             <YoutubeRow>
