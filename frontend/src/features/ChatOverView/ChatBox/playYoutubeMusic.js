@@ -1,6 +1,11 @@
 import { sendMessage } from "app/actions/chat";
 import { updateListConversationWithSentMessage } from "app/actions/conversations";
 import playMusicApi from "apis/playMusicApi";
+var decodeHtmlEntity = function (str) {
+  return str.replace(/&#(\d+);/g, function (match, dec) {
+    return String.fromCharCode(dec);
+  });
+};
 export async function searchYoutubeData(message, roomId, socket, dispatch) {
   const searchKey = message.replace('!!play', '')
   const rs = await fetch(
@@ -19,7 +24,8 @@ export async function searchYoutubeData(message, roomId, socket, dispatch) {
     const time = duration.slice(2, duration.length).toLowerCase();
     if (!data2.items[0]) return;
     // message += `${i + 1}.  ${data.items[i].snippet.title} (${data.items[i]?.snippet?.publishTime?.split('T')[0]}) \n`
-    message += `${i + 1}.  ${data.items[i].snippet.title} (${time}) \n`
+    const decodeTitle = decodeHtmlEntity(data?.items[i]?.snippet?.title)
+    message += `${i + 1}.  ${decodeTitle} (${time}) \n`;
   }
   if (message === 'List music found ♪♫!\n') message = 'No result found, please try to search again'
   socket?.emit('chat message', message,
