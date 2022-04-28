@@ -246,7 +246,7 @@ function ChatOverView() {
 
   var notificationChat = 0;
   listConversation.forEach((item) => {
-    if (item.UnseenMessage != null)
+    if (item.UnseenMessage != null && item.LastMessage !== null)
       notificationChat += item.UnseenMessage > 0 ? 1 : 0;
   });
   const notification = useSelector(notificationCountSelector);

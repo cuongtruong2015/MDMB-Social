@@ -206,6 +206,7 @@ function LefBar({ MessageActive, ContactActive, inChatWindow }) {
       notification.chat + notification.contact
     })`;
   else document.title = `MDMB Social`;
+  console.log(notification);
   return (
     <Wrapper className="LeftBar" inChatWindow={inChatWindow}>
       <Logo onClick={handleLogoClick} ContactActive={ContactActive} />

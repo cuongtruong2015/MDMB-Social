@@ -244,13 +244,15 @@ export default function RightSide() {
   };
   //notification
   React.useEffect(() => {
-    dispatch(getNotificationCount(null, newListRelationship.length));
+    dispatch(
+      getNotificationCount(notificationChat, newListRelationship.length)
+    );
   }, [newListRelationship]);
   const listConversation = useSelector(getConversations);
   const socket = useSelector(getSocket);
   var notificationChat = 0;
   listConversation.forEach((item) => {
-    if (item.UnseenMessage != null)
+    if (item.UnseenMessage != null && item.LastMessage !== null)
       notificationChat += item.UnseenMessage > 0 ? 1 : 0;
   });
   var audio = new Audio(messageAudio);
