@@ -176,6 +176,7 @@ function LefBar({ MessageActive, ContactActive, inChatWindow }) {
     socket.disconnect();
     dispatch(logout(auth?.accessToken));
     navigate('/login');
+    document.title = `MDMB Social`;
   };
   const handleUserProfileClick = () => {
     dispatch(getUserProfile(auth.accountId));

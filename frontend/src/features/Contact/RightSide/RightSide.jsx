@@ -291,7 +291,7 @@ export default function RightSide() {
               >
                 <img src={item.Avatar} alt="avatar" />
               </Avatar>
-              <Name>{item.Name} asdasd</Name>
+              <Name>{item.Name}</Name>
               <AcceptButton
                 onClick={(e) => {
                   handleAcceptClick(
